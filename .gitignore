@@ -1,0 +1,20 @@
+#Ignore DS_Store Files
+.DS_Store
+
+#Ignore mm.log File
+mm.log
+
+#Ignore Sublime Project Files
+*.sublime*
+
+#Ignore Config Files
+config/*
+
+#Ignore package.xml
+package.xml
+
+#Ignore Eclipse Project Files
+salesforce.schema
+Referenced\ Packages/*
+.project
+.settings/*
