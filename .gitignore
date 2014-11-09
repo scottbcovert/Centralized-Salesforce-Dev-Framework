@@ -18,3 +18,10 @@ salesforce.schema
 Referenced\ Packages/*
 .project
 .settings/*
+
+#Ignore SfApexDox Files
+build.xml
+docAuthor.txt
+docHome.txt
+SfApexDocLog.txt
+SfApexDocs/*

@@ -1,6 +1,6 @@
 /**
-* @author Hari Krishnan
-* @date 07/17/2013
+* @author Scott Covert
+* @date 11/9/2014
 * @description This factory creates the correct dispatcher and dispatches the trigger event(s) to the appropriate 
 *				event handler(s). The dispatchers are automatically created using the Type API, hence dispatcher 
 *				registration is not required for each dispatchers.
@@ -8,8 +8,8 @@
 public with sharing class TriggerFactory
 {
     /** 
-	* @author Hari Krishnan
-	* @date 07/17/2013
+	* @author Scott Covert
+	* @date 11/9/2014
 	* @description Creates the appropriate dispatcher and dispatches the trigger event to the dispatcher's event handler method.
 	* @param Schema.sObjectType Object type to process (SObject.sObjectType)
 	*/
@@ -22,8 +22,8 @@ public with sharing class TriggerFactory
     }
 
     /** 
-	* @author Hari Krishnan
-	* @date 07/17/2013
+	* @author Scott Covert
+	* @date 11/9/2014
 	* @description Dispatches to the dispatcher's event handlers.
 	* @param ITriggerDispatcher A Trigger dispatcher that dispatches to the appropriate handlers
 	*/ 
@@ -56,8 +56,8 @@ public with sharing class TriggerFactory
     } 
 
     /** 
-	* @author Hari Krishnan
-	* @date 07/17/2013
+	* @author Scott Covert
+	* @date 11/9/2014
 	* @description Gets the appropriate dispatcher based on the SObject. It constructs the instance of the dispatcher
 	*				dynamically using the Type API. The name of the dispatcher has to follow this format:
 	*				<ObjectName>TriggerDispatcher. For e.g. for the Feedback__c object, the dispatcher has to be named

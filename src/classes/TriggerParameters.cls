@@ -1,13 +1,13 @@
 /**
-* @author Hari Krishnan
-* @date 07/16/2013
+* @author Scott Covert
+* @date 11/9/2014
 * @description This class holds the trigger parameters.
 */
 public class TriggerParameters {
 
 	/** 
-	* @author Hari Krishnan
-	* @date 07/16/2013
+	* @author Scott Covert
+	* @date 11/9/2014
 	* @description A enum that represents the trigger event.
 	*/
 	public Enum TriggerEvent { beforeInsert, beforeUpdate, beforeDelete, afterInsert, afterUpdate, afterDelete, afterUndelete }
@@ -21,8 +21,8 @@ public class TriggerParameters {
 	public Boolean isExecuting { get; private set; }
 	
 	/** 
-	* @author Hari Krishnan
-	* @date 07/16/2013
+	* @author Scott Covert
+	* @date 11/9/2014
 	* @description Constructs the TriggerParameter object.
 	* @param List<SObject> A list of records with the state of 'before' event.
 	* @param List<SObject> A list of records with the state of 'after' event.
