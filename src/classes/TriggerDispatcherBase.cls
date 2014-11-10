@@ -131,6 +131,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
     			afterDeleteHandler.inProgressEntry(tp);
     		if(tEvent == TriggerParameters.TriggerEvent.afterUnDelete)
     			afterUndeleteHandler.inProgressEntry(tp);
+    		handlerInstance.updateObjects();
     	}
     }
 }
