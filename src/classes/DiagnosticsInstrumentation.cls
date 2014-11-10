@@ -21,7 +21,7 @@ public class DiagnosticsInstrumentation {
 		public DiagnosticEntry(String entrydescription)
 		{
 			level = CurrentLevel;
-			description = '[' + System.now().format('HH:mm:ss.SSS') + '] ' + entrydescription;
+			description = '[' + System.now().format('HH:mm:ss.SSS') + '] {' + UserInfo.getName() + '} ' + entrydescription;
 		}
 	}
 
