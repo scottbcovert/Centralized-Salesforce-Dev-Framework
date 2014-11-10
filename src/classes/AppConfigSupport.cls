@@ -5,7 +5,8 @@
 */
 public class AppConfigSupport {
 	private static AppConfig__c testconfig = null;
-	
+	public static Boolean testKillSwitch = false;
+
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
@@ -22,6 +23,7 @@ public class AppConfigSupport {
 			theobject = new AppConfig__c();
 			theobject.name = 'default';
 			theobject.EnableDiagnostics__c = (Test.isRunningTest())? true: false;
+			theobject.KillSwitch__c = (Test.isRunningTest() && testKillSwitch)? true: false;
 			if(!Test.isRunningTest()) Database.Insert(theobject);
 			else testconfig = theobject;
 		}
@@ -33,6 +35,14 @@ public class AppConfigSupport {
 		get
 		{
 			return GetAppConfig().EnableDiagnostics__c;
+		}
+	}
+
+	public static Boolean KillSwitchEnabled
+	{
+		get
+		{
+			return GetAppConfig().KillSwitch__c;
 		}
 	}
 	

@@ -13,5 +13,15 @@
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
+    <fields>
+        <fullName>KillSwitch__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>KillSwitch for Application</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Warning: All logic (except for the config page controller) will be turned off if enabled!</inlineHelpText>
+        <label>KillSwitch</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
     <label>App Config</label>
 </CustomObject>

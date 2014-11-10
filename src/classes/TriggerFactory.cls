@@ -9,6 +9,7 @@ public with sharing class TriggerFactory
 {
 
     public static Boolean FakeException = false;
+    private static Boolean KillSwitchEnabled = AppConfigSupport.KillSwitchEnabled;
 
     /** 
 	* @author Scott Covert
@@ -18,33 +19,35 @@ public with sharing class TriggerFactory
 	*/
     public static void createTriggerDispatcher(Schema.sObjectType soType)
     {
-        // Initial Push to Diagnostic Log
-        String beforeOrAfter = 'Before ';
-        if (Trigger.isAfter)
-            beforeOrAfter = 'After ';
-        String dmlState = 'Insert';
-        if (Trigger.isUpdate){
-            dmlState = 'Update';
-        }
-        else if (Trigger.isDelete){
-            dmlState = 'Delete';
-        }
-        else if (Trigger.isUndelete){
-            dmlState = 'Undelete';
-        }
-        String soTypeName = soType.getDescribe().getName();
-        DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger Fired for ' + soTypeName + ' Object');
-        try{
-            ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
-            if (dispatcher == null || FakeException)
-                throw new CustomException('No Trigger dispatcher registered for Object Type: ' + soType);
-            execute(dispatcher,soTypeName);
-            // Final Pop from Diagnostic Log
-            DiagnosticsInstrumentation.Pop();
-        }
-        catch(Exception ex){
-            DiagnosticsInstrumentation.DebugException(ex);
-            DiagnosticsInstrumentation.PopAll();
+        if (!KillSwitchEnabled){
+            // Initial Push to Diagnostic Log
+            String beforeOrAfter = 'Before ';
+            if (Trigger.isAfter)
+                beforeOrAfter = 'After ';
+            String dmlState = 'Insert';
+            if (Trigger.isUpdate){
+                dmlState = 'Update';
+            }
+            else if (Trigger.isDelete){
+                dmlState = 'Delete';
+            }
+            else if (Trigger.isUndelete){
+                dmlState = 'Undelete';
+            }
+            String soTypeName = soType.getDescribe().getName();
+            DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger Fired for ' + soTypeName + ' Object');
+            try{
+                ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
+                if (dispatcher == null || FakeException)
+                    throw new CustomException('No Trigger dispatcher registered for Object Type: ' + soType);
+                execute(dispatcher,soTypeName);
+                // Final Pop from Diagnostic Log
+                DiagnosticsInstrumentation.Pop();
+            }
+            catch(Exception ex){
+                DiagnosticsInstrumentation.DebugException(ex);
+                DiagnosticsInstrumentation.PopAll();
+            }
         }
     }
 
