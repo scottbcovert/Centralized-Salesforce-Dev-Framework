@@ -100,6 +100,11 @@ public with sharing class TriggerFactory
                 dispatcher.afterUpdate(tp);
                 DiagnosticsInstrumentation.Pop();
             }
+            else if (Trigger.isUnDelete){
+                DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.afterUnDelete');
+                dispatcher.afterUnDelete(tp);
+                DiagnosticsInstrumentation.Pop();
+            }
         }
         DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.andFinally');
         dispatcher.andFinally();
