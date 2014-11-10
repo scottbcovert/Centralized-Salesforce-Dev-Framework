@@ -119,6 +119,9 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
     		else if (System.isFuture()){
     			handlerInstance.futureEntry(tp);
     		}
+    		else if (System.isScheduled()){
+    			handlerInstance.scheduledEntry(tp);
+    		}
     		else {
     			handlerInstance.mainEntry(tp);
     		}
