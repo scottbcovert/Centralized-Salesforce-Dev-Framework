@@ -18,6 +18,6 @@ public with sharing class CustomFrameworkTest {
 		Account acct1 = [SELECT Id, Name FROM Account WHERE Name = 'testacct1'];
 		acct1.Name = 'testacct2';
 		update acct1;
-		System.assert(true);
+		System.assert(true,'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 	}
 }
