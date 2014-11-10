@@ -29,7 +29,7 @@ public class AppConfigSupport {
 			theobject.EnableDiagnostics__c = (Test.isRunningTest())? true: false;
 			theobject.KillSwitch__c = (Test.isRunningTest() && testKillSwitch)? true: false;
 			theobject.EmailDebugInfoLog__c = (Test.isRunningTest() && testEmailDebugInfoLog)? true: false;
-			theobject.DebugInfo_Recipient_Emails__c = (Test.isRunningTest() && testDebugInfoRecipientEmails!=null)? testDebugInfoRecipientEmails: null;
+			theobject.DebugInfoRecipientEmails__c = (Test.isRunningTest() && testDebugInfoRecipientEmails!=null)? testDebugInfoRecipientEmails: null;
 			theobject.MaxDebugInfoRecords__c = (Test.isRunningTest() && testDebugInfoMaxNum!=null)? testDebugInfoMaxNum: null;
 			theobject.MaxDebugInfoAge__c = (Test.isRunningTest() && testDebugInfoMaxAge!=null)? testDebugInfoMaxAge: null;
 			if(!Test.isRunningTest()) Database.Insert(theobject);
@@ -66,7 +66,7 @@ public class AppConfigSupport {
 	{
 		get
 		{
-			return GetAppConfig().DebugInfo_Recipient_Emails__c;
+			return GetAppConfig().DebugInfoRecipientEmails__c;
 		}
 	}
 

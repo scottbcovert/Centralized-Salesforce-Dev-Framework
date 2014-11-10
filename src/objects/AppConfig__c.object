@@ -5,7 +5,7 @@
     <description>Application Configuration</description>
     <enableFeeds>false</enableFeeds>
     <fields>
-        <fullName>DebugInfo_Recipient_Emails__c</fullName>
+        <fullName>DebugInfoRecipientEmails__c</fullName>
         <description>Email(s) to Receive DebugInfo Logs</description>
         <externalId>false</externalId>
         <inlineHelpText>Email(s) to Receive DebugInfo Logs</inlineHelpText>
