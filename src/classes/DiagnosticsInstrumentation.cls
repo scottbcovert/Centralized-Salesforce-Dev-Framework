@@ -21,7 +21,7 @@ public class DiagnosticsInstrumentation {
 		public DiagnosticEntry(String entrydescription)
 		{
 			level = CurrentLevel;
-			description = entrydescription;
+			description = '[' + System.now().format('HH:mm:ss.SSS') + '] ' + entrydescription;
 		}
 	}
 
@@ -47,6 +47,7 @@ public class DiagnosticsInstrumentation {
 		if(!DiagnosticsEnabled) return;
 		if(DiagnosticLog==null) DiagnosticLog = new List<DiagnosticEntry>();
 		DiagnosticLog.add(new DiagnosticEntry(debugstring));
+		System.Debug(LoggingLevel.Info, debugstring);
 	}
 	
 	/** 
