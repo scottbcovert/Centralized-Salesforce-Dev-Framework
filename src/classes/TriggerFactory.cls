@@ -18,10 +18,31 @@ public with sharing class TriggerFactory
 	*/
     public static void createTriggerDispatcher(Schema.sObjectType soType)
     {
-        ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
-        if (dispatcher == null)
-            throw new CustomException('No Trigger dispatcher registered for Object Type: ' + soType);
-        execute(dispatcher);
+        // Initial Push to Diagnostic Log
+        String beforeOrAfter = 'Before ';
+        if (Trigger.isAfter)
+            beforeOrAfter = 'After ';
+        String dmlState = 'Insert';
+        if (Trigger.isUpdate){
+            dmlState = 'Update';
+        }
+        else if (Trigger.isDelete){
+            dmlState = 'Delete';
+        }
+        else if (Trigger.isUndelete){
+            dmlState = 'Undelete';
+        }
+        DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger Fired for ' + soType.getDescribe().getName() + ' Object');
+        try{
+            ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
+            if (dispatcher == null || FakeException)
+                throw new CustomException('No Trigger dispatcher registered for Object Type: ' + soType);
+            execute(dispatcher);
+        }
+        catch(Exception ex){
+            DiagnosticsInstrumentation.DebugException(ex);
+            DiagnosticsInstrumentation.PopAll();
+        }
     }
 
     /** 
@@ -56,6 +77,8 @@ public with sharing class TriggerFactory
                 dispatcher.afterUpdate(tp);
         }
         dispatcher.andFinally();
+        // Final Pop from Diagnostic Log
+        DiagnosticsInstrumentation.Pop();
     } 
 
     /** 
