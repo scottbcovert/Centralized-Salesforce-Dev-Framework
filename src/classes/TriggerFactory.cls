@@ -32,12 +32,15 @@ public with sharing class TriggerFactory
         else if (Trigger.isUndelete){
             dmlState = 'Undelete';
         }
-        DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger Fired for ' + soType.getDescribe().getName() + ' Object');
+        String soTypeName = soType.getDescribe().getName();
+        DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger Fired for ' + soTypeName + ' Object');
         try{
             ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
             if (dispatcher == null || FakeException)
                 throw new CustomException('No Trigger dispatcher registered for Object Type: ' + soType);
-            execute(dispatcher);
+            execute(dispatcher,soTypeName);
+            // Final Pop from Diagnostic Log
+            DiagnosticsInstrumentation.Pop();
         }
         catch(Exception ex){
             DiagnosticsInstrumentation.DebugException(ex);
@@ -51,33 +54,55 @@ public with sharing class TriggerFactory
 	* @description Dispatches to the dispatcher's event handlers.
 	* @param ITriggerDispatcher A Trigger dispatcher that dispatches to the appropriate handlers
 	*/ 
-    private static void execute(ITriggerDispatcher dispatcher)
+    private static void execute(ITriggerDispatcher dispatcher, String soTypeName)
     {
     	TriggerParameters tp = new TriggerParameters(Trigger.old, Trigger.new, Trigger.oldMap, Trigger.newMap,
 									Trigger.isBefore, Trigger.isAfter, Trigger.isDelete, 
 									Trigger.isInsert, Trigger.isUpdate, Trigger.isUnDelete, Trigger.isExecuting);
         // Handle before trigger events
         if (Trigger.isBefore) {
+            DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.bulkBefore');
             dispatcher.bulkBefore();
-            if (Trigger.isDelete)
+            DiagnosticsInstrumentation.Pop();
+            if (Trigger.isDelete){
+                DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.beforeDelete');
                 dispatcher.beforeDelete(tp);
-            else if (Trigger.isInsert)
+                DiagnosticsInstrumentation.Pop();
+            }
+            else if (Trigger.isInsert){
+                DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.beforeInsert');
                 dispatcher.beforeInsert(tp);
-            else if (Trigger.isUpdate)
-                dispatcher.beforeUpdate(tp);         
+                DiagnosticsInstrumentation.Pop();
+            }
+            else if (Trigger.isUpdate){
+                DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.beforeUpdate');
+                dispatcher.beforeUpdate(tp);      
+                DiagnosticsInstrumentation.Pop();   
+            }
         }
         else	// Handle after trigger events
         {
+            DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.bulkAfter');
             dispatcher.bulkAfter();
-            if (Trigger.isDelete)
+            DiagnosticsInstrumentation.Pop();
+            if (Trigger.isDelete){
+                DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.afterDelete');
                 dispatcher.afterDelete(tp);
-            else if (Trigger.isInsert)
+                DiagnosticsInstrumentation.Pop();
+            }
+            else if (Trigger.isInsert){
+                DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.afterInsert');
                 dispatcher.afterInsert(tp);
-            else if (Trigger.isUpdate)
+                DiagnosticsInstrumentation.Pop();
+            }
+            else if (Trigger.isUpdate){
+                DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.afterUpdate');
                 dispatcher.afterUpdate(tp);
+                DiagnosticsInstrumentation.Pop();
+            }
         }
+        DiagnosticsInstrumentation.Push(soTypeName + 'TriggerDispatcher.andFinally');
         dispatcher.andFinally();
-        // Final Pop from Diagnostic Log
         DiagnosticsInstrumentation.Pop();
     } 
 
