@@ -30,11 +30,6 @@ public class AppConfigSupport {
 	
 	public static Boolean DiagnosticsEnabled
 	{ 
-		/** 
-		* @author Scott Covert
-		* @date 11/9/2014
-		* @description Checks AppConfig custom settings to determine diagnostics status.
-		*/	
 		get
 		{
 			return GetAppConfig().EnableDiagnostics__c;
