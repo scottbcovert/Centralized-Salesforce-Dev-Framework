@@ -40,7 +40,7 @@
         <defaultValue>false</defaultValue>
         <description>KillSwitch for Application</description>
         <externalId>false</externalId>
-        <inlineHelpText>Warning: All logic (except for the config page controller) will be turned off if enabled!</inlineHelpText>
+        <inlineHelpText>Warning: All logic will be turned off if enabled!</inlineHelpText>
         <label>KillSwitch</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
