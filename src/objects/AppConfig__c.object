@@ -5,6 +5,28 @@
     <description>Application Configuration</description>
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>DebugInfo_Recipient_Emails__c</fullName>
+        <description>Email(s) to Receive DebugInfo Logs</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Email(s) to Receive DebugInfo Logs</inlineHelpText>
+        <label>DebugInfo Recipient Email(s)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>EmailDebugInfoLog__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Email DebugInfo Log to DebugInfo Recipient Email(s)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Email DebugInfo Log to DebugInfo Recipient Email(s)</inlineHelpText>
+        <label>Email DebugInfo Log</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>EnableDiagnostics__c</fullName>
         <defaultValue>false</defaultValue>
         <description>Set to True to Enable Diagnostics</description>
@@ -22,6 +44,32 @@
         <label>KillSwitch</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>MaxDebugInfoAge__c</fullName>
+        <description>Maximum DebugInfo Age Before Clearing (Leave blank for no limit)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Maximum DebugInfo Age Before Clearing (Leave blank for no limit)</inlineHelpText>
+        <label>Max DebugInfo Age</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>MaxDebugInfoRecords__c</fullName>
+        <description>Maximum DebugInfo Records Before Clearing (Leave blank for no limit)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Maximum DebugInfo Records Before Clearing (Leave blank for no limit)</inlineHelpText>
+        <label>Max DebugInfo Records</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
     </fields>
     <label>App Config</label>
 </CustomObject>
