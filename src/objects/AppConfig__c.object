@@ -2,10 +2,12 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <customSettingsType>List</customSettingsType>
     <customSettingsVisibility>Public</customSettingsVisibility>
+    <description>Application Configuration</description>
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>EnableDiagnostics__c</fullName>
         <defaultValue>false</defaultValue>
+        <description>Set to True to Enable Diagnostics</description>
         <externalId>false</externalId>
         <label>Enable Diagnostics</label>
         <trackTrending>false</trackTrending>
