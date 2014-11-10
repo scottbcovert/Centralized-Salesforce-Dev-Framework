@@ -6,6 +6,10 @@
 public class DiagnosticsInstrumentation {
 	
 	public static Boolean DiagnosticsEnabled = AppConfigSupport.DiagnosticsEnabled;
+	private static Boolean EmailDebugInfoEnabled = AppConfigSupport.EmailDebugInfoEnabled;
+	private static String DebugInfoEmailRecipients = AppConfigSupport.DebugInfoEmailRecipients;
+	private static Integer DebugInfoMaxNum = AppConfigSupport.DebugInfoMaxNum;
+	private static Integer DebugInfoMaxAge = AppConfigSupport.DebugInfoMaxAge;
 	
 	private static List<DiagnosticEntry> DiagnosticLog;
 	private static Integer CurrentLevel = 0;
@@ -18,7 +22,7 @@ public class DiagnosticsInstrumentation {
 		Integer level;
 		String description;
 		
-		public DiagnosticEntry(String entrydescription)
+		private DiagnosticEntry(String entrydescription)
 		{
 			level = CurrentLevel;
 			description = '[' + System.now().format('HH:mm:ss.SSS') + '] {' + UserInfo.getName() + '} ' + entrydescription;
@@ -28,7 +32,7 @@ public class DiagnosticsInstrumentation {
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
-	* @description Should be called at the start of every function to increment and update the current execution context level..
+	* @description Should be called at the start of every function to increment and update the current execution context level.
 	*/
 	public static void Push(String functionname)
 	{
@@ -63,7 +67,11 @@ public class DiagnosticsInstrumentation {
 		ExceptionTrace = ' Exception occurred line ' + ex.getLineNumber() + ' - ' + ex.getMessage();
 		for(String st: StackTrace) ExceptionTrace += ' | ' + st;
 		ExceptionTrace += ' |\n ';
-		if(DiagnosticsEnabled) insert dbg;
+		if(DiagnosticsEnabled){
+			insert dbg;
+			if (DebugInfoMaxNum!=null || DebugInfoMaxAge!=null)
+				CheckDebugInfoLog();
+		}
 	}
 
 	/** 
@@ -107,7 +115,97 @@ public class DiagnosticsInstrumentation {
 		}
 		return result;
 	}
-	
 
+	/** 
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Checks if DebugInfo log needs clearing
+	*/
+	public static void CheckDebugInfoLog()
+	{
+		list<DebugInfo__c> debugInfoLog = [SELECT Id, CreatedDate, DebugData__c FROM DebugInfo__c ORDER BY CreatedDate ASC];
+		if (!debugInfoLog.isEmpty() && DebugInfoMaxNum!=null && debugInfoLog.size()>=DebugInfoMaxNum){
+			ClearDebugInfoLog(debugInfoLog);
+		}
+		if (!debugInfoLog.isEmpty() && DebugInfoMaxAge!=null && debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * DebugInfoMaxAge)){
+			list<DebugInfo__c> debugInfoToDelete = new list<DebugInfo__c>();
+			DateTime maxAge = System.now().addDays(-1 * DebugInfoMaxAge);
+			for (DebugInfo__c di : debugInfoLog){
+				if (di.CreatedDate <= maxAge)
+					debugInfoToDelete.add(di);
+			}
+			ClearDebugInfoLog(debugInfoToDelete);
+		}
+	}
+	
+	/** 
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Deletes DebugInfo log records
+	* @param list<DebugInfo__c> List of debug info records to be deleted
+	*/
+	public static void ClearDebugInfoLog(list<DebugInfo__c> expiredDebugInfoLog)
+	{
+		if (EmailDebugInfoEnabled && DebugInfoEmailRecipients!=null && DebugInfoEmailRecipients!=''){
+			EmailDebugInfoLog(expiredDebugInfoLog);
+		}
+		delete expiredDebugInfoLog;
+	}
+
+	/** 
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Emails DebugInfo log
+	* @param list<DebugInfo__c> List of debug info records to be emailed
+	*/
+	public static void EmailDebugInfoLog(list<DebugInfo__c> debugInfoLog)
+	{
+		//Define email settings
+        Messaging.SingleEmailMessage debugInfoEmail = new Messaging.SingleEmailMessage();                   
+        debugInfoEmail.setToAddresses(DebugInfoEmailRecipients.split(';'));
+        debugInfoEmail.setSubject('DebugInfo Log for ' + UserInfo.getOrganizationName() + '(' + UserInfo.getOrganizationId() + ')');
+        String emailMessage = 'Attached is the DebugInfo log that was cleared for ' + UserInfo.getOrganizationName() + '(' + UserInfo.getOrganizationId() + ')';
+        debugInfoEmail.setPlainTextBody(emailMessage);
+        debugInfoEmail.setHtmlBody(emailMessage);
+        //Generate attachment
+        String csvString = new DebugInfoLogAttachment().generate(debugInfoLog);
+        transient Blob csvAttachment = Blob.valueOf(csvString);
+        transient Messaging.EmailFileAttachment efa = new Messaging.EmailFileAttachment();
+        efa.setBody(csvAttachment);
+        efa.setContentType('text/csv');
+        efa.setFileName(System.today().format()+'_'+UserInfo.getOrganizationName()+'_DebugInfoLog.csv');
+        efa.setInline(false);
+        debugInfoEmail.setFileAttachments(new Messaging.EmailFileAttachment[] {efa});
+        //Send email
+        Messaging.sendEmail(new Messaging.SingleEmailMessage[] {debugInfoEmail});
+	}
+
+	private class DebugInfoLogAttachment {
+		
+		private String generate(list<DebugInfo__c> diLog) {
+	        String s = line(new String[] {
+	                format('DebugInfo Entry'),
+	                format('Created Date'),
+	                format('Debug Data')
+	                });
+	        for (DebugInfo__c di : diLog) {
+	            s += line(new String[] {
+	                    format(di.Name),
+	                    format(di.CreatedDate),
+	                    format(di.DebugData__c)
+	                    });
+	        }
+	        return s;
+	    }
+	    private String line(String[] cells) {
+	        return String.join(cells, ',') + '\n';
+	    }
+	    private String format(DateTime dt)    {
+	        return dt != null ? '"' + dt.format().escapeCsv() + '"' : '""';
+	    }
+	    private String format(String s) {
+	        return s != null ? '"' + s.escapeCsv() + '"' : '""';
+	    }
+	}
 	
 }

@@ -6,6 +6,10 @@
 public class AppConfigSupport {
 	private static AppConfig__c testconfig = null;
 	public static Boolean testKillSwitch = false;
+	public static Boolean testEmailDebugInfoLog = false;
+	public static String testDebugInfoRecipientEmails;
+	public static Integer testDebugInfoMaxNum;
+	public static Integer testDebugInfoMaxAge;
 
 	/** 
 	* @author Scott Covert
@@ -24,6 +28,10 @@ public class AppConfigSupport {
 			theobject.name = 'default';
 			theobject.EnableDiagnostics__c = (Test.isRunningTest())? true: false;
 			theobject.KillSwitch__c = (Test.isRunningTest() && testKillSwitch)? true: false;
+			theobject.EmailDebugInfoLog__c = (Test.isRunningTest() && testEmailDebugInfoLog)? true: false;
+			theobject.DebugInfo_Recipient_Emails__c = (Test.isRunningTest() && testDebugInfoRecipientEmails!=null)? testDebugInfoRecipientEmails: null;
+			theobject.MaxDebugInfoRecords__c = (Test.isRunningTest() && testDebugInfoMaxNum!=null)? testDebugInfoMaxNum: null;
+			theobject.MaxDebugInfoAge__c = (Test.isRunningTest() && testDebugInfoMaxAge!=null)? testDebugInfoMaxAge: null;
 			if(!Test.isRunningTest()) Database.Insert(theobject);
 			else testconfig = theobject;
 		}
@@ -43,6 +51,38 @@ public class AppConfigSupport {
 		get
 		{
 			return GetAppConfig().KillSwitch__c;
+		}
+	}
+
+	public static Boolean EmailDebugInfoEnabled
+	{
+		get
+		{
+			return GetAppConfig().EmailDebugInfoLog__c;
+		}
+	}
+
+	public static String DebugInfoEmailRecipients
+	{
+		get
+		{
+			return GetAppConfig().DebugInfo_Recipient_Emails__c;
+		}
+	}
+
+	public static Integer DebugInfoMaxNum
+	{
+		get
+		{
+			return (Integer)GetAppConfig().MaxDebugInfoRecords__c;
+		}
+	}
+
+	public static Integer DebugInfoMaxAge
+	{
+		get
+		{
+			return (Integer)GetAppConfig().MaxDebugInfoAge__c;
 		}
 	}
 	

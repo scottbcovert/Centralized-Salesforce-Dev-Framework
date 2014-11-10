@@ -47,9 +47,9 @@
     </fields>
     <fields>
         <fullName>MaxDebugInfoAge__c</fullName>
-        <description>Maximum DebugInfo Age Before Clearing (Leave blank for no limit)</description>
+        <description>Maximum DebugInfo Age (in days) Before Clearing (Leave blank for no limit)</description>
         <externalId>false</externalId>
-        <inlineHelpText>Maximum DebugInfo Age Before Clearing (Leave blank for no limit)</inlineHelpText>
+        <inlineHelpText>Maximum DebugInfo Age (in days) Before Clearing (Leave blank for no limit)</inlineHelpText>
         <label>Max DebugInfo Age</label>
         <precision>18</precision>
         <required>false</required>
