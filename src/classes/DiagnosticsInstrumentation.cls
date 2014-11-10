@@ -6,10 +6,10 @@
 public class DiagnosticsInstrumentation {
 	
 	public static Boolean DiagnosticsEnabled = AppConfigSupport.DiagnosticsEnabled;
-	private static Boolean EmailDebugInfoEnabled = AppConfigSupport.EmailDebugInfoEnabled;
-	private static String DebugInfoEmailRecipients = AppConfigSupport.DebugInfoEmailRecipients;
-	private static Integer DebugInfoMaxNum = AppConfigSupport.DebugInfoMaxNum;
-	private static Integer DebugInfoMaxAge = AppConfigSupport.DebugInfoMaxAge;
+	public static Boolean EmailDebugInfoEnabled = AppConfigSupport.EmailDebugInfoEnabled;
+	public static String DebugInfoEmailRecipients = AppConfigSupport.DebugInfoEmailRecipients;
+	public static Integer DebugInfoMaxNum = AppConfigSupport.DebugInfoMaxNum;
+	public static Integer DebugInfoMaxAge = AppConfigSupport.DebugInfoMaxAge;
 	
 	private static List<DiagnosticEntry> DiagnosticLog;
 	private static Integer CurrentLevel = 0;
@@ -127,7 +127,7 @@ public class DiagnosticsInstrumentation {
 		if (!debugInfoLog.isEmpty() && DebugInfoMaxNum!=null && debugInfoLog.size()>=DebugInfoMaxNum){
 			ClearDebugInfoLog(debugInfoLog);
 		}
-		if (!debugInfoLog.isEmpty() && DebugInfoMaxAge!=null && debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * DebugInfoMaxAge)){
+		if (!debugInfoLog.isEmpty() && DebugInfoMaxAge!=null && (debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * DebugInfoMaxAge)) || Test.isRunningTest()){
 			list<DebugInfo__c> debugInfoToDelete = new list<DebugInfo__c>();
 			DateTime maxAge = System.now().addDays(-1 * DebugInfoMaxAge);
 			for (DebugInfo__c di : debugInfoLog){
@@ -177,7 +177,8 @@ public class DiagnosticsInstrumentation {
         efa.setInline(false);
         debugInfoEmail.setFileAttachments(new Messaging.EmailFileAttachment[] {efa});
         //Send email
-        Messaging.sendEmail(new Messaging.SingleEmailMessage[] {debugInfoEmail});
+        if (!Test.isRunningTest())
+        	Messaging.sendEmail(new Messaging.SingleEmailMessage[] {debugInfoEmail});
 	}
 
 	private class DebugInfoLogAttachment {

@@ -3,21 +3,43 @@
 * @date 11/9/2014
 * @description This class provides unit tests for the framework.
 */
-@isTest
+@isTest (oninstall=true seealldata=false)
 public with sharing class CustomFrameworkTest { 
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description This method tests the framework using the sample account trigger. 
 	*/
-	public static testMethod void testAccountTrigger() {
+	@isTest (oninstall=true seealldata=false)
+	public static void testAccountTrigger() {
 		Account acct = new Account();
 		acct.Name = 'testacct1';
 		insert acct;
 
-		Account acct1 = [SELECT Id, Name FROM Account WHERE Name = 'testacct1'];
-		acct1.Name = 'testacct2';
-		update acct1;
-		System.assert(true,'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
+		Account acct2 = [SELECT Id, Name FROM Account WHERE Name = 'testacct1'];
+		acct2.Name = 'testacct2';
+		update acct2;
+		//KillSwitch
+		TriggerFactory.KillSwitchEnabled = true;
+		update acct2;
+		TriggerFactory.KillSwitchEnabled = false;
+		//Fake Exception
+		TriggerFactory.FakeException = true;
+		//DebugInfo Log
+		DiagnosticsInstrumentation.EmailDebugInfoEnabled = true;
+		DiagnosticsInstrumentation.DebugInfoMaxAge = 7;
+		DiagnosticsInstrumentation.DebugInfoEmailRecipients = 'test@test.com';
+		update acct2;
+		TriggerFactory.FakeException = false;
+		update acct2;
+		acct2 = [SELECT Id, Name, Website FROM Account WHERE Name = 'testacct2'];
+		System.assertEquals(acct2.Website,'www.salesforce.com','Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
+		delete acct2;
+		list<Account> allAccounts = [SELECT Id FROM Account];
+		System.assert(allAccounts.isEmpty(),'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
+		allAccounts = [SELECT Id FROM Account ALL ROWS];
+		undelete allAccounts;
+		allAccounts = [SELECT Id FROM Account];
+		System.assert(!allAccounts.isEmpty(),'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 	}
 }

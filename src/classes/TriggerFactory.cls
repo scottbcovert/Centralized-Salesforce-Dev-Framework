@@ -9,7 +9,7 @@ public with sharing class TriggerFactory
 {
 
     public static Boolean FakeException = false;
-    private static Boolean KillSwitchEnabled = AppConfigSupport.KillSwitchEnabled;
+    public static Boolean KillSwitchEnabled = AppConfigSupport.KillSwitchEnabled;
 
     /** 
 	* @author Scott Covert
@@ -35,7 +35,7 @@ public with sharing class TriggerFactory
                 dmlState = 'Undelete';
             }
             String soTypeName = soType.getDescribe().getName();
-            DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger Fired for ' + soTypeName + ' Object');
+            DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger for ' + soTypeName + ' Object');
             try{
                 ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
                 if (dispatcher == null || FakeException)
