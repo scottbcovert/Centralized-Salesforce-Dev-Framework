@@ -21,6 +21,22 @@ public interface ITriggerHandler {
 	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
 	*/
 	void inProgressEntry(TriggerParameters tp);
+
+	/** 
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Called by asynchronous function
+	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
+	*/
+	void futureEntry(TriggerParameters tp);
+
+	/** 
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Called by batch apex
+	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
+	*/
+	void batchEntry(TriggerParameters tp);
 	
 	/** 
 	* @author Scott Covert

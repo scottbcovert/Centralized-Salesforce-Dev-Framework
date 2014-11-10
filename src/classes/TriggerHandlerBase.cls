@@ -27,6 +27,26 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 	public virtual void inProgressEntry(TriggerParameters tp) {
 		
 	}
+
+	/** 
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Called by asynchronous function. The trigger handlers can choose to ignore this method.
+	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
+	*/
+	public virtual void futureEntry(TriggerParameters tp) {
+		
+	}
+
+	/** 
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Called by batch apex. The trigger handlers can choose to ignore this method.
+	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
+	*/
+	public virtual void batchEntry(TriggerParameters tp) {
+		
+	}
 	
 	/** 
 	* @author Scott Covert
