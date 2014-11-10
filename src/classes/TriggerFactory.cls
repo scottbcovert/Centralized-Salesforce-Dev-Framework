@@ -60,10 +60,10 @@ public with sharing class TriggerFactory
 	* @date 11/9/2014
 	* @description Gets the appropriate dispatcher based on the SObject. It constructs the instance of the dispatcher
 	*				dynamically using the Type API. The name of the dispatcher has to follow this format:
-	*				<ObjectName>TriggerDispatcher. For e.g. for the Feedback__c object, the dispatcher has to be named
-	*				as FeedbackTriggerDispatcher.
+	*				<ObjectName>TriggerDispatcher. For e.g. for the Account object, the dispatcher has to be named
+	*				as AccountTriggerDispatcher. For the custom object Custom__c, the name should be CustomTriggerDispatcher.
 	* @param Schema.sObjectType Object type to create the dispatcher
-	* @return ITriggerDispatcher A trigger dispatcher  if one exists or null.
+	* @return ITriggerDispatcher A trigger dispatcher if one exists, otherwise null.
 	*/
     private static ITriggerDispatcher getTriggerDispatcher(Schema.sObjectType soType)
     {
