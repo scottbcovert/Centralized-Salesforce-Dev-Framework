@@ -7,6 +7,9 @@
 */
 public with sharing class TriggerFactory
 {
+
+    public static Boolean FakeException = false;
+
     /** 
 	* @author Scott Covert
 	* @date 11/9/2014
@@ -17,7 +20,7 @@ public with sharing class TriggerFactory
     {
         ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
         if (dispatcher == null)
-            throw new TriggerException('No Trigger dispatcher registered for Object Type: ' + soType);
+            throw new CustomException('No Trigger dispatcher registered for Object Type: ' + soType);
         execute(dispatcher);
     }
 
