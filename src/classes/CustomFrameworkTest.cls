@@ -4,11 +4,11 @@
 * @description This class provides unit tests for the framework.
 */
 @isTest
-public with sharing class TriggerFrameworkTest { 
+public with sharing class CustomFrameworkTest { 
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
-	* @description This method tests framework via the sample account trigger. 
+	* @description This method tests the framework using the sample account trigger. 
 	*/
 	public static testMethod void testAccountTrigger() {
 		Account acct = new Account();
