@@ -150,6 +150,7 @@ public class DiagnosticsInstrumentation {
 			EmailDebugInfoLog(expiredDebugInfoLog);
 		}
 		delete expiredDebugInfoLog;
+		Database.emptyRecycleBin(expiredDebugInfoLog);
 	}
 
 	/** 
