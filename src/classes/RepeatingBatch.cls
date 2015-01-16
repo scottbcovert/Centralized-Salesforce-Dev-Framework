@@ -4,6 +4,8 @@
 * @description Defines the Batch Apex for Scheduler Ping-Pong.
 */
 public class RepeatingBatch implements Database.Batchable<sObject> {
+    private static final String TYPE_DEFAULT = 'Default';
+
     /**
 	* @author Scott Covert
 	* @date 1/16/2015
@@ -21,15 +23,23 @@ public class RepeatingBatch implements Database.Batchable<sObject> {
 	*/    
     public void execute(Database.BatchableContext BC, List<AsyncRequest__c> scope){
         try{
-        	System.debug('This is an example of calling synchronous code from asynchronous process...');
-        	// Delete AsyncRequests
-        	delete scope;
-        	Database.emptyRecycleBin(scope);
+        	List<AsyncRequest__c> arsToDelete = new List<AsyncRequest__c>();
+        	for (AsyncRequest__c ar : scope){
+        		if (ar.AsyncType__c == TYPE_DEFAULT){
+        			List<Id> idsToProcess = ar.Params__c.split(',');
+        			System.debug('This is an example of calling from our asynchronous process the default synchronous code with a list of ids to be processed...');
+        			arsToDelete.add(ar);
+        		}
+        	}
+        	if (arsToDelete.size()>0){
+        		// Delete AsyncRequests
+	        	delete arsToDelete;
+	        	Database.emptyRecycleBin(arsToDelete);
+        	}
         }
         catch(Exception e){
         	// Error -> Preserve AsyncRequests
         }
-        delete scope;
     }
 
     /**
