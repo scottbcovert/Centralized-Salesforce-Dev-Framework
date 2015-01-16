@@ -1,5 +1,5 @@
 /**
-* @author Scott covert
+* @author Scott Covert
 * @date 11/9/2014
 * @description Defines the interface for the trigger dispatching architecture.
 */
