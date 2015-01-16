@@ -149,8 +149,10 @@ public class DiagnosticsInstrumentation {
 		if (EmailDebugInfoEnabled && DebugInfoEmailRecipients!=null && DebugInfoEmailRecipients!=''){
 			EmailDebugInfoLog(expiredDebugInfoLog);
 		}
-		delete expiredDebugInfoLog;
-		Database.emptyRecycleBin(expiredDebugInfoLog);
+		if (expiredDebugInfoLog.size()>0){
+			delete expiredDebugInfoLog;
+			Database.emptyRecycleBin(expiredDebugInfoLog);
+		}
 	}
 
 	/** 
