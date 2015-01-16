@@ -32,6 +32,10 @@ public with sharing class CustomFrameworkTest {
 		update acct2;
 		TriggerFactory.FakeException = false;
 		update acct2;
+		TriggerHandlerBase.SimulateConcurrencyError = new List<Boolean>{true};
+		update acct2;
+		TriggerHandlerBase.SimulateConcurrencyError = null;
+		update acct2;
 		acct2 = [SELECT Id, Name, Website FROM Account WHERE Name = 'testacct2'];
 		System.assertEquals(acct2.Website,'www.salesforce.com','Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		delete acct2;

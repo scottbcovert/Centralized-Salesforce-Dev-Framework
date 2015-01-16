@@ -7,7 +7,8 @@
 */
 public abstract class TriggerHandlerBase implements ITriggerHandler {
 	protected Map<Id, SObject> sObjectsToUpdate = new Map<Id, SObject>();
-	
+	@testvisible private static List<Boolean> SimulateConcurrencyError;
+
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
@@ -64,10 +65,37 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
-	* @description Updates the objects, if any.
+	* @description Updates the objects (if any). Concurrency errors will be silently logged while any other errors will throw an exception.
 	*/
 	public virtual void updateObjects() {
-		if(sObjectsToUpdate.size() > 0)
-			update sObjectsToUpdate.values();
+		if(sObjectsToUpdate.size() > 0){
+			List<Database.Saveresult> dmlResults = Database.Update(sObjectsToUpdate.values(), false);
+			Map<Id, SObject> concurrencyFailures = new Map<Id, SObject>();
+			List<Database.Error> updateFailures = new List<Database.Error>();
+			for(Integer x = 0; x< sObjectsToUpdate.size(); x++) {
+				Database.Saveresult sr = dmlResults[x];
+				if(!sr.isSuccess() || (SimulateConcurrencyError!=null && SimulateConcurrencyError[x]))
+				{
+					for(Database.Error err : sr.getErrors())
+					{
+						if(err.getStatusCode() == StatusCode.UNABLE_TO_LOCK_ROW)
+						{
+							concurrencyFailures.put(sObjectsToUpdate.values()[x].Id,sObjectsToUpdate.values()[x]);
+						}
+						else{
+							updateFailures.add(err);
+						}
+					}
+					if(SimulateConcurrencyError!=null && SimulateConcurrencyError[x]) concurrencyFailures.put(sObjectsToUpdate.values()[x].Id,sObjectsToUpdate.values()[x]);
+				}
+			}			
+	    	if(concurrencyFailures.size()>0) {
+	    		String errorMessage = 'Concurrency failure on records ' + String.Join(new List<ID>(concurrencyFailures.keyset()),',');
+	    		DiagnosticsInstrumentation.Debug(errorMessage);
+	    	}
+	    	if(updateFailures.size()>0) {
+	    		throw new CustomException(updateFailures[0].getMessage());
+	    	}
+		}
 	}
 }
