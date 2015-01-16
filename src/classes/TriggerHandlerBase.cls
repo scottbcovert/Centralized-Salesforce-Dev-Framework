@@ -90,8 +90,13 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 				}
 			}			
 	    	if(concurrencyFailures.size()>0) {
+	    		// Log Concurrency Error
 	    		String errorMessage = 'Concurrency failure on records ' + String.Join(new List<ID>(concurrencyFailures.keyset()),',');
 	    		DiagnosticsInstrumentation.Debug(errorMessage);
+	    		// Attempt Recovery
+	    		AsyncRequest__c ar = new AsyncRequest__c(Params__c=String.Join(new List<ID>(concurrencyFailures.keyset()),','));
+	    		insert ar;
+	    		ScheduleHandler.StartScheduler();
 	    	}
 	    	if(updateFailures.size()>0) {
 	    		throw new CustomException(updateFailures[0].getMessage());
