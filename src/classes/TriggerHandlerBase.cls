@@ -20,7 +20,7 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
-	* @description Called for the subsequent times in the same execution context. The trigger handlers can chose
+	* @description Called for the subsequent times in the same execution context. The trigger handlers can choose
 	*				to ignore if they don't need the reentrant feature.
 	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
 	*/
@@ -31,31 +31,34 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
-	* @description Called by batch apex. The trigger handlers can choose to ignore this method.
+	* @description Called by batch apex. The trigger handlers can choose to ignore this method if they
+	*				want batch entries to behave no differently than main entries.
 	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
 	*/
 	public virtual void batchEntry(TriggerParameters tp) {
-		
+		mainEntry(tp);
 	}
 
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
-	* @description Called by asynchronous function. The trigger handlers can choose to ignore this method.
+	* @description Called by asynchronous function. The trigger handlers can choose to ignore this method if they
+	*				want future entries to behave no differently than main entries.
 	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
 	*/
 	public virtual void futureEntry(TriggerParameters tp) {
-		
+		mainEntry(tp);
 	}
 
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
-	* @description Called by scheduled apex. The trigger handlers can choose to ignore this method.
+	* @description Called by scheduled apex. The trigger handlers can choose to ignore this method if they
+	*				want scheduled entries to behave no differently than main entries.
 	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
 	*/
 	public virtual void scheduledEntry(TriggerParameters tp) {
-		
+		mainEntry(tp);
 	}
 	
 	/** 
