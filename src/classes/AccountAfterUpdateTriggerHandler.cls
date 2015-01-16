@@ -7,18 +7,31 @@ public class AccountAfterUpdateTriggerHandler extends TriggerHandlerBase {
 	
 	private void process(List<Account> listNewAccounts) {
 		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.mainEntry');
-		for(Account acct : listNewAccounts) {
-			Account newAccount = new Account();
-			newAccount.Id = acct.Id;
-			newAccount.Website = 'www.salesforce.com';
-			sObjectsToUpdate.put(newAccount.Id, newAccount);
-		}
+		sObjectsToUpdate.putAll(AccountHelper.updateWebsite(listNewAccounts));
 		DiagnosticsInstrumentation.Pop();
 	}
 	
 	public override void inProgressEntry(TriggerParameters tp) {
 		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.inProgressEntry');
 		System.debug('This is an example for reentrant code...');
+		DiagnosticsInstrumentation.Pop();
+	}
+
+	public override void batchEntry(TriggerParameters tp) {
+		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.batchEntry');
+		System.debug('This is an example for batch entry code...');
+		DiagnosticsInstrumentation.Pop();
+	}
+
+	public override void futureEntry(TriggerParameters tp) {
+		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.futureEntry');
+		System.debug('This is an example for future entry code...');
+		DiagnosticsInstrumentation.Pop();
+	}
+
+	public override void scheduledEntry(TriggerParameters tp) {
+		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.scheduledEntry');
+		System.debug('This is an example for scheduled entry code...');
 		DiagnosticsInstrumentation.Pop();
 	}
 	
