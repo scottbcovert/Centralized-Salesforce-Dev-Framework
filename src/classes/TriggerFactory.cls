@@ -130,10 +130,10 @@ public with sharing class TriggerFactory
     	String dispatcherTypeName = null;
     	if (originalTypeName.toLowerCase().endsWith('__c')) {
     		Integer index = originalTypeName.toLowerCase().indexOf('__c');
-    		dispatcherTypeName = originalTypeName.substring(0, index) + 'TriggerDispatcher';
+    		dispatcherTypeName = originalTypeName.substring(0, index).replace('_','') + 'TriggerDispatcher';
     	}
     	else
-    		dispatcherTypeName = originalTypeName + 'TriggerDispatcher';
+    		dispatcherTypeName = originalTypeName.replace('_','') + 'TriggerDispatcher';
 
 		Type obType = Type.forName(dispatcherTypeName);
 		ITriggerDispatcher dispatcher = (obType == null) ? null : (ITriggerDispatcher)obType.newInstance();

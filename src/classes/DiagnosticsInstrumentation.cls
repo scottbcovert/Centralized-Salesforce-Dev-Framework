@@ -123,7 +123,7 @@ public class DiagnosticsInstrumentation {
 	*/
 	public static void CheckDebugInfoLog()
 	{
-		list<DebugInfo__c> debugInfoLog = [SELECT Id, CreatedDate, DebugData__c FROM DebugInfo__c ORDER BY CreatedDate ASC];
+		list<DebugInfo__c> debugInfoLog = [SELECT Id, Name, CreatedDate, DebugData__c FROM DebugInfo__c ORDER BY CreatedDate ASC];
 		if (!debugInfoLog.isEmpty() && DebugInfoMaxNum!=null && debugInfoLog.size()>=DebugInfoMaxNum){
 			ClearDebugInfoLog(debugInfoLog);
 		}
