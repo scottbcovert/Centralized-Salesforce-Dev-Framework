@@ -5,7 +5,7 @@
 */
 public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched {
 	private static Boolean ScheduledInContext = false;
-	private static final Integer MINIMUM_WAIT_TIME= 0;
+	private static final Integer MINIMUM_WAIT_TIME= 10;
 
 	/**
 	* @author Scott Covert
@@ -14,8 +14,8 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	*/
 	public void execute(SchedulableContext sc)
     {
-        System.abortJob(sc.getTriggerID());
         RepeatingBatch.StartTheBatch();
+    	System.abortJob(sc.getTriggerID());
     } 
 
     /**
@@ -43,12 +43,17 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 		ScheduledInContext = true;
     	
         List<CronTrigger> jobs = [SELECT Id, CronJobDetail.Name, State, NextFireTime FROM CronTrigger where CronJobDetail.Name='ASync_Process_Schedule'];
-    	if(jobs.size()>0 && jobs[0].state!='COMPLETED' && jobs[0].state!='ERROR' && jobs[0].state!='DELETED') return;
-
-        Set<String> activeJobStates = new Set<String>{'Queued','Processing','Preparing'};
-		List<AsyncApexJob> apexJobs = [Select ID, ApexClass.Name from AsyncApexJob WHERE ApexClass.Name = 'RepeatingBatch' And Status in :activeJobStates];
-		if(apexJobs.size()>0) return;
-
+    	if(jobs.size()>0 && jobs[0].state!='COMPLETED' && jobs[0].state!='ERROR' && jobs[0].state!='DELETED') {
+			// Job is already running - check if batch is running
+			Set<String> activeJobStates = new Set<String>{'Queued','Processing','Preparing'};
+			List<AsyncApexJob> apexJobs = [Select ID, ApexClass.Name from AsyncApexJob WHERE ApexClass.Name = 'RepeatingBatch' And Status in :activeJobStates];
+			if(apexJobs.size()>0) return; // Batch is running
+			// Check if current job is set to execute first  
+			if(jobs[0].NextFireTime <= requests[0].Scheduled_Time__c) return; // Current job is still earliest in the queue
+    	}
+    	// At this point any existing job should be deleted
+    	if (jobs.size()>0) System.abortJob(jobs[0].Id);
+        
 		try{
 			System.schedule('ASync_Process_Schedule', GetSchedulerExpression(requests[0].Scheduled_Time__c.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());
 		}
