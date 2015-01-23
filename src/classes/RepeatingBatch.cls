@@ -4,6 +4,7 @@
 * @description Defines the Batch Apex for Scheduler Ping-Pong.
 */
 public class RepeatingBatch implements Database.Batchable<sObject> {
+    private static Integer BatchSize = 1;
     private static final String TYPE_DEFAULT = 'Default';
 
     /**
@@ -59,6 +60,7 @@ public class RepeatingBatch implements Database.Batchable<sObject> {
     public static void StartTheBatch()
     {
         RepeatingBatch rb = new RepeatingBatch();
-        Database.executeBatch(rb, 1);
+        if (Test.isRunningTest()) BatchSize = [SELECT COUNT() FROM AsyncRequest__c]; // Ensure batch executes only once when testing
+        Database.executeBatch(rb, BatchSize);
     }
 }
