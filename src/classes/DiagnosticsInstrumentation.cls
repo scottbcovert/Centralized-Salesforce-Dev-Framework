@@ -82,7 +82,7 @@ public class DiagnosticsInstrumentation {
 	public static void Pop()
 	{
 		if(CurrentLevel>0) CurrentLevel-=1;
-		if(CurrentLevel==0) System.Debug(LoggingLevel.Info, 'Diagnostic Log\n' + CurrentLog());
+		if(CurrentLevel==0 && DiagnosticLog!=null) System.Debug(LoggingLevel.Info, 'Diagnostic Log\n' + CurrentLog());
 		if(StackTrace.size()>0) StackTrace.remove(StackTrace.size()-1);
 	}
 	
