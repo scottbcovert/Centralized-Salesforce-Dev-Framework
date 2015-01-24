@@ -127,7 +127,7 @@ public class DiagnosticsInstrumentation {
 		if (!debugInfoLog.isEmpty() && DebugInfoMaxNum!=null && debugInfoLog.size()>=DebugInfoMaxNum){
 			ClearDebugInfoLog(debugInfoLog);
 		}
-		if (!debugInfoLog.isEmpty() && DebugInfoMaxAge!=null && (debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * DebugInfoMaxAge)) || Test.isRunningTest()){
+		else if (!debugInfoLog.isEmpty() && DebugInfoMaxAge!=null && (debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * DebugInfoMaxAge)) || Test.isRunningTest()){
 			list<DebugInfo__c> debugInfoToDelete = new list<DebugInfo__c>();
 			DateTime maxAge = System.now().addDays(-1 * DebugInfoMaxAge);
 			for (DebugInfo__c di : debugInfoLog){
