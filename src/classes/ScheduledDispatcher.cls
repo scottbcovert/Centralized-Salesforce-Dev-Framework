@@ -4,7 +4,12 @@
 * @description Defines the interface for Scheduler Ping-Pong.
 */
 public class ScheduledDispatcher Implements Schedulable {
-	public Interface IScheduleDispatched 
+	/**
+    * @author Scott Covert
+    * @date 1/16/2015
+    * @description Scheduler Ping-Pong interface
+    */
+    public Interface IScheduleDispatched 
     { 
         void execute(SchedulableContext sc); 
     } 
@@ -12,6 +17,7 @@ public class ScheduledDispatcher Implements Schedulable {
 	* @author Scott Covert
 	* @date 1/16/2015
 	* @description Executes ScheduleHandler.
+    * @param SchedulableContext Current schedulable context
 	*/
     public void execute(SchedulableContext sc) 
     {

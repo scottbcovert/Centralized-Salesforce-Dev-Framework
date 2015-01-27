@@ -8,12 +8,19 @@
 *				as otherwise unit tests MAY fail. The actual actions should be placed in the handlers (in a separate class).
 */
 public class AccountTriggerDispatcher extends TriggerDispatcherBase {
+	/** Stores if before insert handler is processing */
 	private static Boolean isBeforeInsertProcessing = false;
+	/** Stores if before update handler is processing */
 	private static Boolean isBeforeUpdateProcessing = false;
+	/** Stores if before delete handler is processing */
 	private static Boolean isBeforeDeleteProcessing = false;
+	/** Stores if after insert handler is processing */
 	private static Boolean isAfterInsertProcessing = false;
+	/** Stores if after update handler is processing */
 	private static Boolean isAfterUpdateProcessing = false; 
+	/** Stores if after delete handler is processing */
 	private static Boolean isAfterDeleteProcessing = false;
+	/** Stores if after undelete handler is processing */
 	private static Boolean isAfterUnDeleteProcessing = false;
 
 	/** 

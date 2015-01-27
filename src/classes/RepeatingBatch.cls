@@ -4,13 +4,17 @@
 * @description Defines the Batch Apex for Scheduler Ping-Pong.
 */
 public class RepeatingBatch implements Database.Batchable<sObject> {
+    /** Batch size to use during execution, default to one */
     private static Integer BatchSize = 1;
+    /** Constant representing default ASyncRequest type */
     private static final String TYPE_DEFAULT = 'Default';
 
     /**
 	* @author Scott Covert
 	* @date 1/16/2015
 	* @description Defines the QueryLocator to retrieve any AsyncRequests at or past their scheduled time.
+    * @param Database.BatchableContext Current batchable context
+    * @return Database.QueryLocator QueryLocator based on ASyncRequest records that are at or past their scheduled time
 	*/
     public Database.QueryLocator start(Database.BatchableContext BC){
         DateTime now = System.now();
@@ -21,6 +25,8 @@ public class RepeatingBatch implements Database.Batchable<sObject> {
 	* @author Scott Covert
 	* @date 1/16/2015
 	* @description Attempts to execute AsyncRequests.
+    * @param Database.BatchableContext Current batchable context
+    * @param List A list of AsyncRequest records for the current batchable context
 	*/    
     public void execute(Database.BatchableContext BC, List<AsyncRequest__c> scope){
         try{
@@ -49,6 +55,7 @@ public class RepeatingBatch implements Database.Batchable<sObject> {
 	* @author Scott Covert
 	* @date 1/16/2015
 	* @description Execute Scheduled Apex for Scheduler Ping-Pong.
+    * @param Database.BatchableContext Current batchable context
 	*/  
     public void finish(Database.BatchableContext BC){
     	ScheduleHandler.StartScheduler();

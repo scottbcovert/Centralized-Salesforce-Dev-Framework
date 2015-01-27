@@ -8,7 +8,9 @@
 public with sharing class TriggerFactory
 {
 
+    /** Determines if a custom exception should be forced for test purposes */
     public static Boolean FakeException = false;
+    /** Determines if the application kill switch has been enabled */
     public static Boolean KillSwitchEnabled = AppConfigSupport.KillSwitchEnabled;
 
     /** 

@@ -4,11 +4,17 @@
 * @description This class leverages the AppConfig custom setting to get and set configuration options for the application.
 */
 public class AppConfigSupport {
+	/** Cached config options for testing */
 	private static AppConfig__c testconfig = null;
+	/** KillSwitch value for testing */
 	public static Boolean testKillSwitch = false;
+	/** EmailDebugInfoLog value for testing */
 	public static Boolean testEmailDebugInfoLog = false;
+	/** DebugInfoRecipientEmails value for testing */
 	public static String testDebugInfoRecipientEmails;
+	/** DebugInfoMaxNum value for testing */
 	public static Integer testDebugInfoMaxNum;
+	/** DebugInfoMaxAge value for testing */
 	public static Integer testDebugInfoMaxAge;
 
 	/** 
@@ -16,6 +22,7 @@ public class AppConfigSupport {
 	* @date 11/9/2014
 	* @description Called to get (or set and then return if currently null) config options for the execution context via the AppConfig custom setting.
 	*				Caches result for future calls if within testing context.
+	* @return AppConfig__c App Config Custom Settings
 	*/
 	public static AppConfig__c GetAppConfig()
 	{
@@ -38,6 +45,7 @@ public class AppConfigSupport {
 		return theobject;
 	}
 	
+	/** Stores if Diagnostics are enabled */
 	public static Boolean DiagnosticsEnabled
 	{ 
 		get
@@ -46,6 +54,7 @@ public class AppConfigSupport {
 		}
 	}
 
+	/** Stores if Kill Switch is enabled */
 	public static Boolean KillSwitchEnabled
 	{
 		get
@@ -54,6 +63,7 @@ public class AppConfigSupport {
 		}
 	}
 
+	/** Stores if DebugInfo Log Emailing is enabled */
 	public static Boolean EmailDebugInfoEnabled
 	{
 		get
@@ -62,6 +72,7 @@ public class AppConfigSupport {
 		}
 	}
 
+	/** Stores Email Recipients for DebugInfo */
 	public static String DebugInfoEmailRecipients
 	{
 		get
@@ -70,6 +81,7 @@ public class AppConfigSupport {
 		}
 	}
 
+	/** Stores maximum number of DebugInfo records */
 	public static Integer DebugInfoMaxNum
 	{
 		get
@@ -78,6 +90,7 @@ public class AppConfigSupport {
 		}
 	}
 
+	/** Stores maximum age in days of DebugInfo records */
 	public static Integer DebugInfoMaxAge
 	{
 		get

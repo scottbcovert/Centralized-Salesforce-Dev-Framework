@@ -4,13 +4,16 @@
 * @description Defines the Scheduled Apex for Scheduler Ping-Pong.
 */
 public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched {
+	/** Determines if current execution state is already in a scheduled context */
 	private static Boolean ScheduledInContext = false;
+	/** Constant representing the minimum wait time between scheduled apex calls */
 	private static final Integer MINIMUM_WAIT_TIME= 10;
 
 	/**
 	* @author Scott Covert
 	* @date 1/16/2015
 	* @description Execute Batch Apex for Scheduler Ping-Pong.
+	* @param SchedulableContext Current schedulable context
 	*/
 	public void execute(SchedulableContext sc)
     {
@@ -23,6 +26,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	* @date 1/16/2015
 	* @description Returns Scheduled time in Cron format
 	* @param DateTime Scheduled time
+	* @return String Cron format of given scheduled time
 	*/
     public static String GetSchedulerExpression(Datetime dt) {
         return ('' + dt.second() + ' ' + dt.minute() + ' ' + dt.hour() + ' ' + dt.day() + ' ' + dt.month() + ' ? ' + dt.year());

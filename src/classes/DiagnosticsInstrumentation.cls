@@ -4,24 +4,44 @@
 * @description This class implements diagnostics for the application
 */
 public class DiagnosticsInstrumentation {
-	
+	/** Stores if diagnostics are enabled */
 	public static Boolean DiagnosticsEnabled = AppConfigSupport.DiagnosticsEnabled;
+	/** Stores if DebugInfo Log Emailing is enabled */
 	public static Boolean EmailDebugInfoEnabled = AppConfigSupport.EmailDebugInfoEnabled;
+	/** Stores Email Recipients for DebugInfo */
 	public static String DebugInfoEmailRecipients = AppConfigSupport.DebugInfoEmailRecipients;
+	/** Stores maximum number of DebugInfo records */
 	public static Integer DebugInfoMaxNum = AppConfigSupport.DebugInfoMaxNum;
+	/** Stores maximum age in days of DebugInfo records */
 	public static Integer DebugInfoMaxAge = AppConfigSupport.DebugInfoMaxAge;
 	
+	/** Stores list of diagnostic entries */
 	private static List<DiagnosticEntry> DiagnosticLog;
+	/** Stores current stack level for push/pop functionality */
 	private static Integer CurrentLevel = 0;
-
+	/** Stores custom strack trace string */
 	private static List<String> StackTrace = new List<String>();
+	/** Stores exception trace for custom stack trace */
 	public static String ExceptionTrace = '';
 
+	/**
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Inner class that represents a diagnostic entry
+	*/
 	private class DiagnosticEntry
 	{
+		/** Stores current stack level */
 		Integer level;
+		/** Stores description information for diagnostic entry */
 		String description;
 		
+		/**
+		* @author Scott Covert
+		* @date 11/9/2014
+		* @description Constructor method
+		* @param String Description information for diagnostic entry
+		*/
 		private DiagnosticEntry(String entrydescription)
 		{
 			level = CurrentLevel;
@@ -33,6 +53,7 @@ public class DiagnosticsInstrumentation {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Should be called at the start of every function to increment and update the current execution context level.
+	* @param String Function name
 	*/
 	public static void Push(String functionname)
 	{
@@ -45,6 +66,7 @@ public class DiagnosticsInstrumentation {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Adds new diagnostic entry to the diagnostic log (if diagnostics are enabled)
+	* @param String Debug string value
 	*/
 	public static void Debug(String debugstring)
 	{
@@ -58,6 +80,7 @@ public class DiagnosticsInstrumentation {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Called prior to PopAll to add exception info to diagnostic log and object
+	* @param Exception Thrown exception
 	*/
 	public static void DebugException(Exception ex)
 	{
@@ -101,6 +124,7 @@ public class DiagnosticsInstrumentation {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Returns multi-line string representation of diagnostic log
+	* @return String Indented log of diagnostic entries
 	*/
 	public static String CurrentLog()
 	{
@@ -142,7 +166,7 @@ public class DiagnosticsInstrumentation {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Deletes DebugInfo log records
-	* @param list<DebugInfo__c> List of debug info records to be deleted
+	* @param List A list of debug info records to be deleted
 	*/
 	public static void ClearDebugInfoLog(list<DebugInfo__c> expiredDebugInfoLog)
 	{
@@ -159,7 +183,7 @@ public class DiagnosticsInstrumentation {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Emails DebugInfo log
-	* @param list<DebugInfo__c> List of debug info records to be emailed
+	* @param List A list of debug info records to be emailed
 	*/
 	public static void EmailDebugInfoLog(list<DebugInfo__c> debugInfoLog)
 	{
@@ -184,8 +208,20 @@ public class DiagnosticsInstrumentation {
         	Messaging.sendEmail(new Messaging.SingleEmailMessage[] {debugInfoEmail});
 	}
 
+	/**
+	* @author Scott Covert
+	* @date 11/9/2014
+	* @description Inner class that represents a custom debug log attachment
+	*/
 	private class DebugInfoLogAttachment {
 		
+		/**
+		* @author Scott Covert
+		* @date 11/9/2014
+		* @description Converts a list of debug info records into a string
+		* @param List A list of debug info records
+		* @return String A string representation of the debug info log
+		*/
 		private String generate(list<DebugInfo__c> diLog) {
 	        String s = line(new String[] {
 	                format('DebugInfo Entry'),
@@ -201,12 +237,36 @@ public class DiagnosticsInstrumentation {
 	        }
 	        return s;
 	    }
+
+	    /**
+		* @author Scott Covert
+		* @date 11/9/2014
+		* @description Converts list of strings to single, comma-delimited string with a line break
+		* @param List A list of strings
+		* @return String A comma-delimited string with a line break
+		*/
 	    private String line(String[] cells) {
 	        return String.join(cells, ',') + '\n';
 	    }
+
+	    /**
+		* @author Scott Covert
+		* @date 11/9/2014
+		* @description Converts datetime to CSV-formatted string
+		* @param DateTime Datetime value
+		* @return String CSV-formatted representation of datetime value
+		*/
 	    private String format(DateTime dt)    {
 	        return dt != null ? '"' + dt.format().escapeCsv() + '"' : '""';
 	    }
+
+	    /**
+		* @author Scott Covert
+		* @date 11/9/2014
+		* @description Converts text value to CSV-formatted string
+		* @param String Text value
+		* @return String CSV-formatted representation of text value
+		*/
 	    private String format(String s) {
 	        return s != null ? '"' + s.escapeCsv() + '"' : '""';
 	    }

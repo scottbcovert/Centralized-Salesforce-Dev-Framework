@@ -6,13 +6,20 @@
 */
 public virtual class TriggerDispatcherBase implements ITriggerDispatcher { 
 	
-	private static ITriggerHandler beforeInserthandler;
-	private static ITriggerHandler beforeUpdatehandler;
-	private static ITriggerHandler beforeDeleteHandler;
-	private static ITriggerHandler afterInserthandler;
-	private static ITriggerHandler afterUpdatehandler;
-	private static ITriggerHandler afterDeleteHandler;
-	private static ITriggerHandler afterUndeleteHandler;
+	/** Stores before insert handler for trigger event */
+    private static ITriggerHandler beforeInserthandler;
+    /** Stores before update handler for trigger event */
+    private static ITriggerHandler beforeUpdatehandler;
+    /** Stores before delete handler for trigger event */
+    private static ITriggerHandler beforeDeleteHandler;
+    /** Stores after insert handler for trigger event */
+    private static ITriggerHandler afterInserthandler;
+    /** Stores after update handler for trigger event */
+    private static ITriggerHandler afterUpdatehandler;
+    /** Stores after delete handler for trigger event */
+    private static ITriggerHandler afterDeleteHandler;
+    /** Stores after undelete handler for trigger event */
+    private static ITriggerHandler afterUndeleteHandler;
 
 	
     /** 
@@ -35,6 +42,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description This method is called for records to be inserted during a BEFORE trigger.
+    * @param TriggerParameters Contains the trigger parameters
 	*/
     public virtual void beforeInsert(TriggerParameters tp) {}
 
@@ -42,6 +50,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description This method is called for records to be updated during a BEFORE trigger.
+    * @param TriggerParameters Contains the trigger parameters
 	*/
     public virtual void beforeUpdate(TriggerParameters tp) {}
 
@@ -49,6 +58,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description This method is called for records to be deleted during a BEFORE trigger.
+    * @param TriggerParameters Contains the trigger parameters
 	*/
     public virtual void beforeDelete(TriggerParameters tp) {}
 
@@ -58,6 +68,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @description This method is called for records inserted during an AFTER trigger. Always put field validation 
 	*				in the 'After' methods in case another trigger has modified any values. The record is 'read only' 
 	*				at this point.
+    * @param TriggerParameters Contains the trigger parameters
 	*/
     public virtual void afterInsert(TriggerParameters tp) {} 
 
@@ -65,6 +76,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description This method is called iteratively for each record updated during an AFTER trigger.
+    * @param TriggerParameters Contains the trigger parameters
 	*/
     public virtual void afterUpdate(TriggerParameters tp) {}
 
@@ -72,6 +84,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description This method is called iteratively for each record deleted during an AFTER trigger.
+    * @param TriggerParameters Contains the trigger parameters
 	*/
     public virtual void afterDelete(TriggerParameters tp) {}
     
@@ -79,9 +92,15 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description This method is called prior to execution of a AFTER UNDELETE trigger. 
+    * @param TriggerParameters Contains the trigger parameters
 	*/
     public virtual void afterUnDelete(TriggerParameters tp) {}
     
+    /** 
+    * @author Scott Covert
+    * @date 11/9/2014
+    * @description This method is called at the end of a before trigger event
+    */
     public virtual void andFinally() {}
     
     /** 
@@ -142,7 +161,6 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
     			afterDeleteHandler.inProgressEntry(tp);
     		if(tEvent == TriggerParameters.TriggerEvent.afterUnDelete)
     			afterUndeleteHandler.inProgressEntry(tp);
-    		handlerInstance.updateObjects();
     	}
     }
 }

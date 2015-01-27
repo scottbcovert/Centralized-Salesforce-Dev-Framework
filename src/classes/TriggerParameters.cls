@@ -4,30 +4,31 @@
 * @description This class holds the trigger parameters.
 */
 public class TriggerParameters {
-
-	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
-	* @description A enum that represents the trigger event.
-	*/
+	/** An enum that represents the trigger event */
 	public Enum TriggerEvent { beforeInsert, beforeUpdate, beforeDelete, afterInsert, afterUpdate, afterDelete, afterUndelete }
+	/** Current trigger event */
 	public TriggerEvent tEvent;
-	
+	/** Stores Trigger.old */
 	public List<SObject> oldList { get; private set; }
+	/** Stores Trigger.new */
 	public List<SObject> newList { get; private set; }
+	/** Stores Trigger.oldMap */
 	public Map<Id, SObject> oldMap { get; private set; }
+	/** Stores Trigger.newMap */
 	public Map<Id, SObject> newMap { get; private set; }
+	/** SObject for currently executing trigger */
 	public String triggerObject { get; private set; }
+	/** Stores execution state of trigger */
 	public Boolean isExecuting { get; private set; }
 	
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Constructs the TriggerParameter object.
-	* @param List<SObject> A list of records with the state of 'before' event.
-	* @param List<SObject> A list of records with the state of 'after' event.
-	* @param Map<Id, SObject> A map of records with the state of 'before' event.
-	* @param Map<Id, SObject> A map of records with the state of 'after' event.
+	* @param List A list of records with the state of 'before' event.
+	* @param List A list of records with the state of 'after' event.
+	* @param Map A map of records with the state of 'before' event.
+	* @param Map A map of records with the state of 'after' event.
 	* @param Boolean A flag to indicate 'isBefore' event.
 	* @param Boolean A flag to indicate 'isAfter' event.
 	* @param Boolean A flag to indicate 'isDelete' event.
