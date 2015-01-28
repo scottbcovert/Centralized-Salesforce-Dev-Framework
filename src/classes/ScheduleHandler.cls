@@ -59,6 +59,11 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
     	if (jobs.size()>0) System.abortJob(jobs[0].Id);
         
 		try{
+			// Don't allow jobs to be scheduled in the past
+			DateTime scheduledTime = requests[0].Scheduled_Time__c;
+			if (scheduledTime < System.now()){
+				scheduledTime = System.now();
+			}
 			System.schedule('ASync_Process_Schedule', GetSchedulerExpression(requests[0].Scheduled_Time__c.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());
 		}
 		catch(Exception e){
