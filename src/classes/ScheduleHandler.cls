@@ -68,6 +68,8 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 		}
 		catch(Exception e){
 			// Concurrency Error -> Ignore
+			DiagnosticsInstrumentation.DebugException(e);
+            DiagnosticsInstrumentation.PopAll();
 		}
     }
 

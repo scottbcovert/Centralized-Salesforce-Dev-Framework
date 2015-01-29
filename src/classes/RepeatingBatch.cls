@@ -48,6 +48,8 @@ public class RepeatingBatch implements Database.Batchable<sObject> {
         }
         catch(Exception e){
         	// Error -> Preserve AsyncRequests
+            DiagnosticsInstrumentation.DebugException(e);
+            DiagnosticsInstrumentation.PopAll();
         }
     }
 
