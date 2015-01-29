@@ -64,7 +64,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 			if (scheduledTime < System.now()){
 				scheduledTime = System.now();
 			}
-			System.schedule('ASync_Process_Schedule', GetSchedulerExpression(requests[0].Scheduled_Time__c.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());
+			System.schedule('ASync_Process_Schedule', GetSchedulerExpression(scheduledTime.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());
 		}
 		catch(Exception e){
 			// Concurrency Error -> Ignore
