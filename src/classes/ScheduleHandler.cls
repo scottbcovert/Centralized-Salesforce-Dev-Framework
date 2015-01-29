@@ -17,8 +17,8 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	*/
 	public void execute(SchedulableContext sc)
     {
-        RepeatingBatch.StartTheBatch();
     	System.abortJob(sc.getTriggerID());
+        RepeatingBatch.StartTheBatch();
     } 
 
     /**
