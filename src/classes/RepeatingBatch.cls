@@ -6,6 +6,8 @@
 public class RepeatingBatch implements Database.Batchable<sObject> {
     /** Batch size to use during execution, default to one */
     private static Integer BatchSize = 1;
+    /** Constant representing the maximum batch size to use for testing */
+    private static final Integer MAX_BATCH_SIZE = 200;
     /** Constant representing default ASyncRequest type */
     private static final String TYPE_DEFAULT = 'Default';
 
@@ -76,7 +78,10 @@ public class RepeatingBatch implements Database.Batchable<sObject> {
     public static void StartTheBatch()
     {
         RepeatingBatch rb = new RepeatingBatch();
-        if (Test.isRunningTest()) BatchSize = [SELECT COUNT() FROM AsyncRequest__c]; // Ensure batch executes only once when testing
+        if (Test.isRunningTest()){
+            // Ensure batch executes only once when testing
+            BatchSize = MAX_BATCH_SIZE;
+        }
         Database.executeBatch(rb, BatchSize);
     }
 }

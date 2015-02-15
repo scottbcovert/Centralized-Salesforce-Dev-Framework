@@ -64,7 +64,13 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 			if (scheduledTime < System.now()){
 				scheduledTime = System.now();
 			}
-			System.schedule('ASync_Process_Schedule', GetSchedulerExpression(scheduledTime.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());
+			if (Test.isRunningTest()){
+				// Execute batch apex directly when testing
+				RepeatingBatch.StartTheBatch();
+			}
+			else{
+				System.schedule('ASync_Process_Schedule', GetSchedulerExpression(scheduledTime.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());
+			}
 		}
 		catch(Exception e){
 			// Concurrency Error -> Ignore
