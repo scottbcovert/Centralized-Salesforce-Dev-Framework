@@ -41,9 +41,14 @@ public class RepeatingBatch implements Database.Batchable<sObject> {
         		}
         	}
         	if (arsToDelete.size()>0){
-        		// Delete AsyncRequests
-	        	delete arsToDelete;
-	        	Database.emptyRecycleBin(arsToDelete);
+        		try{
+                    // Delete AsyncRequests
+                    delete arsToDelete;
+                    Database.emptyRecycleBin(arsToDelete);
+                }
+                catch(Exception e){
+                    // Concurrency Error on Delete --> Ignore
+                }
         	}
         }
         catch(Exception e){
