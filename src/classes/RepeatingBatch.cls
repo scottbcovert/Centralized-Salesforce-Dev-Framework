@@ -3,7 +3,7 @@
 * @date 1/16/2015
 * @description Defines the Batch Apex for Scheduler Ping-Pong.
 */
-public class RepeatingBatch implements Database.Batchable<sObject> {
+public class RepeatingBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
     /** Batch size to use during execution, default to one */
     private static Integer BatchSize = 1;
     /** Constant representing the maximum batch size to use for testing */
