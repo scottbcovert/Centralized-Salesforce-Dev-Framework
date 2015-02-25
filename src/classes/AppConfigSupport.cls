@@ -16,6 +16,8 @@ public class AppConfigSupport {
 	public static Integer testDebugInfoMaxNum;
 	/** DebugInfoMaxAge value for testing */
 	public static Integer testDebugInfoMaxAge;
+	/** Set of SObjects that should temporarily have their trigger logic bypassed */
+	public static set<Schema.sObjectType> BypassObjects = new set<Schema.sObjectType>();
 
 	/** 
 	* @author Scott Covert

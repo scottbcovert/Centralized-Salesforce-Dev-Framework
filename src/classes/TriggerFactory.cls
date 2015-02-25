@@ -12,6 +12,8 @@ public with sharing class TriggerFactory
     public static Boolean FakeException = false;
     /** Determines if the application kill switch has been enabled */
     public static Boolean KillSwitchEnabled = AppConfigSupport.KillSwitchEnabled;
+    /** Set of SObjects that should temporarily have their trigger logic bypassed */
+    public static set<Schema.sObjectType> BypassObjects = AppConfigSupport.BypassObjects;
 
     /** 
 	* @author Scott Covert
@@ -21,7 +23,7 @@ public with sharing class TriggerFactory
 	*/
     public static void createTriggerDispatcher(Schema.sObjectType soType)
     {
-        if (!KillSwitchEnabled){
+        if (!KillSwitchEnabled && !BypassObjects.contains(soType)){
             // Initial Push to Diagnostic Log
             String beforeOrAfter = 'Before ';
             if (Trigger.isAfter)
