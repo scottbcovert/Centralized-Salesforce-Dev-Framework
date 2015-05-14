@@ -4,7 +4,7 @@ This framework was built using concepts that were first introduced by Dan Applem
 The main goals of this project were to add the following concepts (again taken from Dan's **Advanced Apex Programming**) to Hari's foundational framework:
 
 * Entry Points for Asynchronous, Batch, & Scheduled Apex Operations
-* Centralized Async Handling & Chaining via Scheduler Ping-Pong (Scheduled Apex <--> Batch Apex)
+* Centralized Async Handling & Chaining via Scheduler Ping-Pong (Scheduled Apex <--> Batch/Future Apex Handler)
 * Centralized Diagnostic Infrastructure
 * Centralized Exception Handling
 * Custom Stack Tracing for Debugging
