@@ -8,18 +8,28 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	private static Boolean ScheduledInContext = false;
 	/** Constant representing the minimum wait time between scheduled apex calls */
 	private static final Integer MINIMUM_WAIT_TIME= 10;
+	/** Constant representing the token that forces repeating future calls in lieu of Batch Apex */
+	private static final String FUTURE_TOKEN = 'Future:';
 
 	/**
 	* @author Scott Covert
 	* @date 1/16/2015
-	* @description Execute Batch Apex for Scheduler Ping-Pong.
+	* @description Execute Scheduler Ping-Pong.
 	* @param SchedulableContext Current schedulable context
 	*/
 	public void execute(SchedulableContext sc)
     {
     	System.abortJob(sc.getTriggerID());
-        RepeatingBatch.StartTheBatch();
-    } 
+        List<AsyncRequest__c> requests = [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c ORDER BY Scheduled_Time__c ASC LIMIT 1];
+        if (requests.size()!=0 && requests[0].AsyncType__c.contains(FUTURE_TOKEN)){
+        	// Initialize Repeating Future Calls
+        	RepeatingFuture.Start();
+        }
+        else{
+        	// Initialize Repeating Batch Apex
+        	RepeatingBatch.StartTheBatch();
+        }
+    }
 
     /**
 	* @author Scott Covert
@@ -65,8 +75,15 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 				scheduledTime = System.now();
 			}
 			if (Test.isRunningTest()){
-				// Execute batch apex directly when testing
-				RepeatingBatch.StartTheBatch();
+				// Execute directly when testing
+				if (requests[0].AsyncType__c.contains(FUTURE_TOKEN)){
+					RepeatingFuture.Start();
+				}
+				else{
+					System.debug('*********');
+					System.debug(requests[0].AsyncType__c);
+					RepeatingBatch.StartTheBatch();
+				}				
 			}
 			else{
 				System.schedule('ASync_Process_Schedule', GetSchedulerExpression(scheduledTime.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());

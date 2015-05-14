@@ -1,15 +1,18 @@
 /**
 * @author Scott Covert
 * @date 1/16/2015
-* @description Defines the Batch Apex for Scheduler Ping-Pong.
+* @description Defines the Batch Apex Handler for Scheduler Ping-Pong.
 */
 public class RepeatingBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
     /** Batch size to use during execution, default to one */
     private static Integer BatchSize = 1;
     /** Constant representing the maximum batch size to use for testing */
     private static final Integer MAX_BATCH_SIZE = 200;
+    /** Constant representing the token that forces repeating future calls in lieu of Batch Apex */
+    private static final String FUTURE_TOKEN = 'Future:';
     /** Constant representing default ASyncRequest type */
     private static final String TYPE_DEFAULT = 'Default';
+
 
     /**
 	* @author Scott Covert
@@ -20,13 +23,13 @@ public class RepeatingBatch implements Database.Batchable<sObject>, Database.All
 	*/
     public Database.QueryLocator start(Database.BatchableContext BC){
         DateTime now = System.now();
-        return Database.getQueryLocator('SELECT Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c WHERE Scheduled_Time__c <= :now');
+        return Database.getQueryLocator('SELECT Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c WHERE (NOT (AsyncType__c LIKE \'' + FUTURE_TOKEN + '%\')) AND Scheduled_Time__c <= :now');
     }
     
     /**
 	* @author Scott Covert
 	* @date 1/16/2015
-	* @description Attempts to execute AsyncRequests.
+	* @description Attempts to execute Batch AsyncRequests.
     * @param Database.BatchableContext Current batchable context
     * @param List A list of AsyncRequest records for the current batchable context
 	*/    

@@ -1,0 +1,48 @@
+/**
+* @author Scott Covert
+* @date 5/14/2015
+* @description Defines the Future Handler for Scheduler Ping-Pong.
+*/
+public class RepeatingFuture {
+	/** Constant representing the token that forces repeating future calls in lieu of Batch Apex */
+	private static final String FUTURE_TOKEN = 'Future:';
+    /** Constant representing default ASyncRequest type */
+    private static final String TYPE_DEFAULT = 'Future:Default';
+
+    /**
+	* @author Scott Covert
+	* @date 5/14/2015
+	* @description Attempts to execute Future AsyncRequests.
+	*/    
+    public static void Start(){
+        try{
+        	List<AsyncRequest__c> arsToDelete = new List<AsyncRequest__c>();
+        	String futureType = FUTURE_TOKEN + '%';
+        	for (AsyncRequest__c ar : [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c WHERE AsyncType__c LIKE :futureType ORDER BY Scheduled_Time__c ASC LIMIT 1]){
+        		if (ar.AsyncType__c == TYPE_DEFAULT){
+        			if (ar.Params__c!=null){
+                        List<Id> idsToProcess = ar.Params__c.split(',');
+        			    System.debug('This is an example of calling an asynchronous method with a list of ids to be processed...');
+        			}
+                    arsToDelete.add(ar);
+        		}
+        	}
+        	if (arsToDelete.size()>0){
+        		try{
+                    // Delete AsyncRequests
+                    delete arsToDelete;
+                    Database.emptyRecycleBin(arsToDelete);
+                }
+                catch(Exception e){
+                    // Concurrency Error on Delete --> Ignore
+                }
+        	}
+        }
+        catch(Exception e){
+        	// Error -> Preserve AsyncRequests
+            DiagnosticsInstrumentation.DebugException(e);
+            DiagnosticsInstrumentation.PopAll();
+        }
+        ScheduleHandler.StartScheduler();
+    }
+}

@@ -44,6 +44,10 @@ public with sharing class CustomFrameworkTest {
 		allAccounts = [SELECT Id FROM Account ALL ROWS];
 		undelete allAccounts;
 		allAccounts = [SELECT Id FROM Account];
+		// Simulate RepeatingFuture
+		AsyncRequest__c ar = new AsyncRequest__c(AsyncType__c='Future:Default',Scheduled_Time__c = System.now(),Params__c=allAccounts[0].Id);
+		insert ar;
+		RepeatingFuture.Start();
 		System.assert(!allAccounts.isEmpty(),'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 	}
 }
