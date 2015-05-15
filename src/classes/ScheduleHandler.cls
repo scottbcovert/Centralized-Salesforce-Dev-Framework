@@ -80,8 +80,6 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 					RepeatingFuture.Start();
 				}
 				else{
-					System.debug('*********');
-					System.debug(requests[0].AsyncType__c);
 					RepeatingBatch.StartTheBatch();
 				}				
 			}
