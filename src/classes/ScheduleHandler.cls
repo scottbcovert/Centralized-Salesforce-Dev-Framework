@@ -9,7 +9,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	/** Constant representing the minimum wait time between scheduled apex calls */
 	private static final Integer MINIMUM_WAIT_TIME= 10;
 	/** Constant representing the token that forces repeating future calls in lieu of Batch Apex */
-	private static final String FUTURE_TOKEN = 'Future:';
+	public static final String FUTURE_TOKEN = 'Future:';
 
 	/**
 	* @author Scott Covert

@@ -9,7 +9,7 @@ public class RepeatingBatch implements Database.Batchable<sObject>, Database.All
     /** Constant representing the maximum batch size to use for testing */
     private static final Integer MAX_BATCH_SIZE = 200;
     /** Constant representing the token that forces repeating future calls in lieu of Batch Apex */
-    private static final String FUTURE_TOKEN = 'Future:';
+    private static final String FUTURE_TOKEN = ScheduleHandler.FUTURE_TOKEN;
     /** Constant representing default ASyncRequest type */
     private static final String TYPE_DEFAULT = 'Default';
 
