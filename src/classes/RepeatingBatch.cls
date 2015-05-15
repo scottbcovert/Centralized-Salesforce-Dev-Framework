@@ -11,7 +11,7 @@ public class RepeatingBatch implements Database.Batchable<sObject>, Database.All
     /** Constant representing the token that forces repeating future calls in lieu of Batch Apex */
     private static final String FUTURE_TOKEN = ScheduleHandler.FUTURE_TOKEN;
     /** Constant representing default ASyncRequest type */
-    private static final String TYPE_DEFAULT = 'Default';
+    public static final String TYPE_DEFAULT = 'Default';
 
 
     /**
