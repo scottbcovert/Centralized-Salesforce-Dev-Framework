@@ -32,9 +32,10 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	        }
     	}
     	catch(Exception e){
-    		// Error -> Preserve AsyncRequests
+    		// Error -> Preserve AsyncRequests & Reschedule
     		DiagnosticsInstrumentation.DebugException(e);
             DiagnosticsInstrumentation.PopAll();
+            ScheduleHandler.StartScheduler();
     	}
     }
 
@@ -46,7 +47,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	* @return String Cron format of given scheduled time
 	*/
     public static String GetSchedulerExpression(Datetime dt) {
-        return ('' + dt.second() + ' ' + dt.minute() + ' ' + dt.hour() + ' ' + dt.day() + ' ' + dt.month() + ' ? ' + dt.year());
+        return ('' + dt.second() + ' ' + dt.minute() + ' * ' + dt.day() + ' ' + dt.month() + ' ? ' + dt.year());
     }
 
     /**
@@ -63,12 +64,12 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 
 		ScheduledInContext = true;
     	
-        List<CronTrigger> jobs = [SELECT Id, CronJobDetail.Name, State, NextFireTime FROM CronTrigger where CronJobDetail.Name='ASync_Process_Schedule'];
+        List<CronTrigger> jobs = [SELECT Id, CronJobDetail.Name, State, NextFireTime FROM CronTrigger where CronJobDetail.Name='ASync_Process_Schedule' ORDER BY NextFireTime ASC];
     	if(jobs.size()>0 && jobs[0].state!='COMPLETED' && jobs[0].state!='ERROR' && jobs[0].state!='DELETED') {
-			// Job is already scheduled - check if async job is running
+			// Job is already scheduled - check if batch job is running
 			Set<String> activeJobStates = new Set<String>{'Queued','Processing','Preparing'};
-			List<AsyncApexJob> apexJobs = [Select ID, ApexClass.Name from AsyncApexJob WHERE Status in :activeJobStates AND (ApexClass.Name = 'RepeatingBatch' OR ApexClass.Name = 'RepeatingFuture')];
-			if(apexJobs.size()>0) return; // Async job is running
+			List<AsyncApexJob> apexJobs = [Select ID, ApexClass.Name from AsyncApexJob WHERE Status in :activeJobStates AND ApexClass.Name = 'RepeatingBatch'];
+			if(apexJobs.size()>0) return; // Batch job is running
 			// Check if current job is set to execute first  
 			if(jobs[0].NextFireTime <= requests[0].Scheduled_Time__c.addSeconds(MINIMUM_WAIT_TIME)) return; // Current job is still earliest in the queue
     	}
