@@ -19,16 +19,23 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	*/
 	public void execute(SchedulableContext sc)
     {
-    	System.abortJob(sc.getTriggerID());
-        List<AsyncRequest__c> requests = [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c ORDER BY Scheduled_Time__c ASC LIMIT 1];
-        if (requests.size()!=0 && requests[0].AsyncType__c.contains(FUTURE_TOKEN)){
-        	// Initialize Repeating Future Calls
-        	RepeatingFuture.Start();
-        }
-        else{
-        	// Initialize Repeating Batch Apex
-        	RepeatingBatch.StartTheBatch();
-        }
+    	try{
+    		System.abortJob(sc.getTriggerID());
+    		List<AsyncRequest__c> requests = [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c ORDER BY Scheduled_Time__c ASC LIMIT 1];
+	        if (requests.size()!=0 && requests[0].AsyncType__c.contains(FUTURE_TOKEN)){
+	        	// Initialize Repeating Future Calls
+	        	RepeatingFuture.Start();
+	        }
+	        else{
+	        	// Initialize Repeating Batch Apex
+	        	RepeatingBatch.StartTheBatch();
+	        }
+    	}
+    	catch(Exception e){
+    		// Error -> Preserve AsyncRequests
+    		DiagnosticsInstrumentation.DebugException(e);
+            DiagnosticsInstrumentation.PopAll();
+    	}
     }
 
     /**
@@ -58,15 +65,17 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
     	
         List<CronTrigger> jobs = [SELECT Id, CronJobDetail.Name, State, NextFireTime FROM CronTrigger where CronJobDetail.Name='ASync_Process_Schedule'];
     	if(jobs.size()>0 && jobs[0].state!='COMPLETED' && jobs[0].state!='ERROR' && jobs[0].state!='DELETED') {
-			// Job is already running - check if batch is running
+			// Job is already scheduled - check if async job is running
 			Set<String> activeJobStates = new Set<String>{'Queued','Processing','Preparing'};
-			List<AsyncApexJob> apexJobs = [Select ID, ApexClass.Name from AsyncApexJob WHERE ApexClass.Name = 'RepeatingBatch' And Status in :activeJobStates];
-			if(apexJobs.size()>0) return; // Batch is running
+			List<AsyncApexJob> apexJobs = [Select ID, ApexClass.Name from AsyncApexJob WHERE Status in :activeJobStates AND (ApexClass.Name = 'RepeatingBatch' OR ApexClass.Name = 'RepeatingFuture')];
+			if(apexJobs.size()>0) return; // Async job is running
 			// Check if current job is set to execute first  
-			if(jobs[0].NextFireTime <= requests[0].Scheduled_Time__c) return; // Current job is still earliest in the queue
+			if(jobs[0].NextFireTime <= requests[0].Scheduled_Time__c.addSeconds(MINIMUM_WAIT_TIME)) return; // Current job is still earliest in the queue
     	}
     	// At this point any existing job should be deleted
-    	if (jobs.size()>0) System.abortJob(jobs[0].Id);
+		for (CronTrigger job : jobs){
+			System.abortJob(job.Id);
+		}
         
 		try{
 			// Don't allow jobs to be scheduled in the past

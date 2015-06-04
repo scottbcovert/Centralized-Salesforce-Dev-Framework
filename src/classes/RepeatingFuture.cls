@@ -15,34 +15,22 @@ public class RepeatingFuture {
 	* @description Attempts to execute Future AsyncRequests.
 	*/    
     public static void Start(){
-        try{
-        	List<AsyncRequest__c> arsToDelete = new List<AsyncRequest__c>();
-        	String futureType = FUTURE_TOKEN + '%';
-        	for (AsyncRequest__c ar : [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c WHERE AsyncType__c LIKE :futureType ORDER BY Scheduled_Time__c ASC LIMIT 1]){
-        		if (ar.AsyncType__c == TYPE_DEFAULT){
-        			if (ar.Params__c!=null){
-                        List<Id> idsToProcess = ar.Params__c.split(',');
-        			    System.debug('This is an example of calling an asynchronous method with a list of ids to be processed...');
-        			}
-                    arsToDelete.add(ar);
-        		}
-        	}
-        	if (arsToDelete.size()>0){
-        		try{
-                    // Delete AsyncRequests
-                    delete arsToDelete;
-                    Database.emptyRecycleBin(arsToDelete);
-                }
-                catch(Exception e){
-                    // Concurrency Error on Delete --> Ignore
-                }
-        	}
-        }
-        catch(Exception e){
-        	// Error -> Preserve AsyncRequests
-            DiagnosticsInstrumentation.DebugException(e);
-            DiagnosticsInstrumentation.PopAll();
-        }
+    	List<AsyncRequest__c> arsToDelete = new List<AsyncRequest__c>();
+    	String futureType = FUTURE_TOKEN + '%';
+    	for (AsyncRequest__c ar : [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c WHERE AsyncType__c LIKE :futureType ORDER BY Scheduled_Time__c ASC LIMIT 1]){
+    		if (ar.AsyncType__c == TYPE_DEFAULT){
+    			if (ar.Params__c!=null){
+                    List<Id> idsToProcess = ar.Params__c.split(',');
+    			    System.debug('This is an example of calling an asynchronous method with a list of ids to be processed...');
+    			}
+                arsToDelete.add(ar);
+    		}
+    	}
+    	if (arsToDelete.size()>0){
+            // Delete AsyncRequests
+            delete arsToDelete;
+            Database.emptyRecycleBin(arsToDelete);
+    	}
         ScheduleHandler.StartScheduler();
     }
 }

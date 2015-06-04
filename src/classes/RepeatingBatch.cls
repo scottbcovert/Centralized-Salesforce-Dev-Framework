@@ -34,33 +34,19 @@ public class RepeatingBatch implements Database.Batchable<sObject>, Database.All
     * @param List A list of AsyncRequest records for the current batchable context
 	*/    
     public void execute(Database.BatchableContext BC, List<AsyncRequest__c> scope){
-        try{
-        	List<AsyncRequest__c> arsToDelete = new List<AsyncRequest__c>();
-        	for (AsyncRequest__c ar : scope){
-        		if (ar.AsyncType__c == TYPE_DEFAULT){
-        			if (ar.Params__c!=null){
-                        List<Id> idsToProcess = ar.Params__c.split(',');
-        			    System.debug('This is an example of calling from our asynchronous process the default synchronous code with a list of ids to be processed...');
-        			}
-                    arsToDelete.add(ar);
-        		}
-        	}
-        	if (arsToDelete.size()>0){
-        		try{
-                    // Delete AsyncRequests
-                    delete arsToDelete;
-                    Database.emptyRecycleBin(arsToDelete);
-                }
-                catch(Exception e){
-                    // Concurrency Error on Delete --> Ignore
-                }
-        	}
-        }
-        catch(Exception e){
-        	// Error -> Preserve AsyncRequests
-            DiagnosticsInstrumentation.DebugException(e);
-            DiagnosticsInstrumentation.PopAll();
-        }
+    	List<AsyncRequest__c> arsToDelete = new List<AsyncRequest__c>();
+    	for (AsyncRequest__c ar : scope){
+    		if (ar.AsyncType__c == TYPE_DEFAULT){
+    			if (ar.Params__c!=null){
+                    List<Id> idsToProcess = ar.Params__c.split(',');
+    			    System.debug('This is an example of calling from our asynchronous process the default synchronous code with a list of ids to be processed...');
+    			}
+                arsToDelete.add(ar);
+    		}
+    	}
+    	if (arsToDelete.size()>0){
+    		Database.emptyRecycleBin(arsToDelete);
+    	}
     }
 
     /**
