@@ -91,7 +91,12 @@ public class DiagnosticsInstrumentation {
 		for(String st: StackTrace) ExceptionTrace += ' | ' + st;
 		ExceptionTrace += ' |\n ';
 		if(DiagnosticsEnabled){
-			insert dbg;
+			try {
+				insert dbg;
+			}
+			catch(System.Exception e){
+				// Unable to insert debug info
+			}
 			if (DebugInfoMaxNum!=null || DebugInfoMaxAge!=null)
 				CheckDebugInfoLog();
 		}
@@ -174,8 +179,13 @@ public class DiagnosticsInstrumentation {
 			EmailDebugInfoLog(expiredDebugInfoLog);
 		}
 		if (expiredDebugInfoLog.size()>0){
-			delete expiredDebugInfoLog;
-			Database.emptyRecycleBin(expiredDebugInfoLog);
+			try {
+				delete expiredDebugInfoLog;
+				Database.emptyRecycleBin(expiredDebugInfoLog);
+			}
+			catch(System.Exception e){
+				// Unable to delete debug info log
+			}
 		}
 	}
 
