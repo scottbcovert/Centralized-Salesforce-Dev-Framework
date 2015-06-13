@@ -5,17 +5,17 @@
 */
 public class AppConfigSupport {
 	/** Cached config options for testing */
-	private static AppConfig__c testconfig = null;
+	@TestVisible private static AppConfig__c testConfig = null;
 	/** KillSwitch value for testing */
-	public static Boolean testKillSwitch = false;
+	@TestVisible private static Boolean testKillSwitch = false;
 	/** EmailDebugInfoLog value for testing */
-	public static Boolean testEmailDebugInfoLog = false;
+	@TestVisible private static Boolean testEmailDebugInfoLog = false;
 	/** DebugInfoRecipientEmails value for testing */
-	public static String testDebugInfoRecipientEmails;
+	@TestVisible private static String testDebugInfoRecipientEmails;
 	/** DebugInfoMaxNum value for testing */
-	public static Integer testDebugInfoMaxNum;
+	@TestVisible private static Integer testDebugInfoMaxNum;
 	/** DebugInfoMaxAge value for testing */
-	public static Integer testDebugInfoMaxAge;
+	@TestVisible private static Integer testDebugInfoMaxAge;
 	/** Set of SObjects that should temporarily have their trigger logic bypassed */
 	public static set<Schema.sObjectType> BypassObjects = new set<Schema.sObjectType>();
 
@@ -26,9 +26,9 @@ public class AppConfigSupport {
 	*				Caches result for future calls if within testing context.
 	* @return AppConfig__c App Config Custom Settings
 	*/
-	public static AppConfig__c GetAppConfig()
+	private static AppConfig__c GetAppConfig()
 	{
-		if(Test.isRunningTest() && testconfig!=null) return testconfig;
+		if(Test.isRunningTest() && testConfig!=null) return testConfig;
 		
 		AppConfig__c theobject = AppConfig__c.getInstance('default');
 		if(theobject==null || Test.isRunningTest()) 
@@ -42,7 +42,7 @@ public class AppConfigSupport {
 			theobject.MaxDebugInfoRecords__c = (Test.isRunningTest() && testDebugInfoMaxNum!=null)? testDebugInfoMaxNum: null;
 			theobject.MaxDebugInfoAge__c = (Test.isRunningTest() && testDebugInfoMaxAge!=null)? testDebugInfoMaxAge: null;
 			if(!Test.isRunningTest()) Database.Insert(theobject);
-			else testconfig = theobject;
+			else testConfig = theobject;
 		}
 		return theobject;
 	}

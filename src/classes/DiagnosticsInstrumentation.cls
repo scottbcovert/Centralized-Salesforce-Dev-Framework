@@ -4,17 +4,6 @@
 * @description This class implements diagnostics for the application
 */
 public class DiagnosticsInstrumentation {
-	/** Stores if diagnostics are enabled */
-	public static Boolean DiagnosticsEnabled = AppConfigSupport.DiagnosticsEnabled;
-	/** Stores if DebugInfo Log Emailing is enabled */
-	public static Boolean EmailDebugInfoEnabled = AppConfigSupport.EmailDebugInfoEnabled;
-	/** Stores Email Recipients for DebugInfo */
-	public static String DebugInfoEmailRecipients = AppConfigSupport.DebugInfoEmailRecipients;
-	/** Stores maximum number of DebugInfo records */
-	public static Integer DebugInfoMaxNum = AppConfigSupport.DebugInfoMaxNum;
-	/** Stores maximum age in days of DebugInfo records */
-	public static Integer DebugInfoMaxAge = AppConfigSupport.DebugInfoMaxAge;
-	
 	/** Stores list of diagnostic entries */
 	private static List<DiagnosticEntry> DiagnosticLog;
 	/** Stores current stack level for push/pop functionality */
@@ -22,7 +11,7 @@ public class DiagnosticsInstrumentation {
 	/** Stores custom strack trace string */
 	private static List<String> StackTrace = new List<String>();
 	/** Stores exception trace for custom stack trace */
-	public static String ExceptionTrace = '';
+	@TestVisible private static String ExceptionTrace = '';
 
 	/**
 	* @author Scott Covert
@@ -55,11 +44,11 @@ public class DiagnosticsInstrumentation {
 	* @description Should be called at the start of every function to increment and update the current execution context level.
 	* @param String Function name
 	*/
-	public static void Push(String functionname)
+	public static void Push(String functionName)
 	{
-		Debug('Entering: ' + functionname);
+		Debug('Entering: ' + functionName);
 		CurrentLevel+=1;
-		StackTrace.add(functionname);
+		StackTrace.add(functionName);
 	}
 	
 	/** 
@@ -68,12 +57,12 @@ public class DiagnosticsInstrumentation {
 	* @description Adds new diagnostic entry to the diagnostic log (if diagnostics are enabled)
 	* @param String Debug string value
 	*/
-	public static void Debug(String debugstring)
+	public static void Debug(String debugString)
 	{
-		if(!DiagnosticsEnabled) return;
+		if(!AppConfigSupport.DiagnosticsEnabled) return;
 		if(DiagnosticLog==null) DiagnosticLog = new List<DiagnosticEntry>();
-		DiagnosticLog.add(new DiagnosticEntry(debugstring));
-		System.Debug(LoggingLevel.Info, debugstring);
+		DiagnosticLog.add(new DiagnosticEntry(debugString));
+		System.Debug(LoggingLevel.Info, debugString);
 	}
 	
 	/** 
@@ -90,14 +79,14 @@ public class DiagnosticsInstrumentation {
 		ExceptionTrace = ' Exception occurred line ' + ex.getLineNumber() + ' - ' + ex.getMessage();
 		for(String st: StackTrace) ExceptionTrace += ' | ' + st;
 		ExceptionTrace += ' |\n ';
-		if(DiagnosticsEnabled){
+		if(AppConfigSupport.DiagnosticsEnabled){
 			try {
 				insert dbg;
 			}
 			catch(System.Exception e){
 				// Unable to insert debug info
 			}
-			if (DebugInfoMaxNum!=null || DebugInfoMaxAge!=null)
+			if (AppConfigSupport.DebugInfoMaxNum!=null || AppConfigSupport.DebugInfoMaxAge!=null)
 				CheckDebugInfoLog();
 		}
 	}
@@ -131,7 +120,7 @@ public class DiagnosticsInstrumentation {
 	* @description Returns multi-line string representation of diagnostic log
 	* @return String Indented log of diagnostic entries
 	*/
-	public static String CurrentLog()
+	private static String CurrentLog()
 	{
 		if(DiagnosticLog == null) return null;
 		String spaces = '                                                                        ';
@@ -150,15 +139,15 @@ public class DiagnosticsInstrumentation {
 	* @date 11/9/2014
 	* @description Checks if DebugInfo log needs clearing
 	*/
-	public static void CheckDebugInfoLog()
+	private static void CheckDebugInfoLog()
 	{
 		list<DebugInfo__c> debugInfoLog = [SELECT Id, Name, CreatedDate, DebugData__c FROM DebugInfo__c ORDER BY CreatedDate ASC];
-		if (!debugInfoLog.isEmpty() && DebugInfoMaxNum!=null && debugInfoLog.size()>=DebugInfoMaxNum){
+		if (!debugInfoLog.isEmpty() && AppConfigSupport.DebugInfoMaxNum!=null && debugInfoLog.size()>=AppConfigSupport.DebugInfoMaxNum){
 			ClearDebugInfoLog(debugInfoLog);
 		}
-		else if (!debugInfoLog.isEmpty() && DebugInfoMaxAge!=null && (debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * DebugInfoMaxAge)) || Test.isRunningTest()){
+		else if (!debugInfoLog.isEmpty() && AppConfigSupport.DebugInfoMaxAge!=null && (debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * AppConfigSupport.DebugInfoMaxAge)) || Test.isRunningTest()){
 			list<DebugInfo__c> debugInfoToDelete = new list<DebugInfo__c>();
-			DateTime maxAge = System.now().addDays(-1 * DebugInfoMaxAge);
+			DateTime maxAge = System.now().addDays(-1 * AppConfigSupport.DebugInfoMaxAge);
 			for (DebugInfo__c di : debugInfoLog){
 				if (di.CreatedDate <= maxAge)
 					debugInfoToDelete.add(di);
@@ -173,9 +162,9 @@ public class DiagnosticsInstrumentation {
 	* @description Deletes DebugInfo log records
 	* @param List A list of debug info records to be deleted
 	*/
-	public static void ClearDebugInfoLog(list<DebugInfo__c> expiredDebugInfoLog)
+	private static void ClearDebugInfoLog(list<DebugInfo__c> expiredDebugInfoLog)
 	{
-		if (EmailDebugInfoEnabled && DebugInfoEmailRecipients!=null && DebugInfoEmailRecipients!=''){
+		if (AppConfigSupport.EmailDebugInfoEnabled && AppConfigSupport.DebugInfoEmailRecipients!=null && AppConfigSupport.DebugInfoEmailRecipients!=''){
 			EmailDebugInfoLog(expiredDebugInfoLog);
 		}
 		if (expiredDebugInfoLog.size()>0){
@@ -195,11 +184,11 @@ public class DiagnosticsInstrumentation {
 	* @description Emails DebugInfo log
 	* @param List A list of debug info records to be emailed
 	*/
-	public static void EmailDebugInfoLog(list<DebugInfo__c> debugInfoLog)
+	private static void EmailDebugInfoLog(list<DebugInfo__c> debugInfoLog)
 	{
 		//Define email settings
         Messaging.SingleEmailMessage debugInfoEmail = new Messaging.SingleEmailMessage();                   
-        debugInfoEmail.setToAddresses(DebugInfoEmailRecipients.split(';'));
+        debugInfoEmail.setToAddresses(AppConfigSupport.DebugInfoEmailRecipients.split(';'));
         debugInfoEmail.setSubject('DebugInfo Log for ' + UserInfo.getOrganizationName() + '(' + UserInfo.getOrganizationId() + ')');
         String emailMessage = 'Attached is the DebugInfo log that was cleared for ' + UserInfo.getOrganizationName() + '(' + UserInfo.getOrganizationId() + ')';
         debugInfoEmail.setPlainTextBody(emailMessage);

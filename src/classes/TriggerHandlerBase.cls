@@ -9,7 +9,7 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 	/** Map of sobjects to update at the end of the trigger event */
 	protected Map<Id, SObject> sObjectsToUpdate = new Map<Id, SObject>();
 	/** Determines if a concurrency error should be simulated for test purposes */
-	@testvisible private static List<Boolean> SimulateConcurrencyError;
+	@TestVisible private static List<Boolean> SimulateConcurrencyError;
 
 	/** 
 	* @author Scott Covert
