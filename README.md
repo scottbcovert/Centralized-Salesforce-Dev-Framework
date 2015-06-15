@@ -17,6 +17,6 @@ Next Steps - Time permitting here are some other concepts/items I'd like to add 
 * Static Resource Utilization for Loading Test Data & Toggling Features/Tests
 * Configuration Page for Updating AppConfig Settings
 
-Documentation was created using ApexDocs (originally developed by Aslam Bari and later improved by Steve Cox) and has been included as a zip file in the project
+[Documentation](http://scottbcovert.github.io/Centralized-Salesforce-Dev-Framework/) was created using ApexDocs (originally developed by Aslam Bari and later improved by Steve Cox) and has been included as a zip file in the project
 
 Happy Coding!
