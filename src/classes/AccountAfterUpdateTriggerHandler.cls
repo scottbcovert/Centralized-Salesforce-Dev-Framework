@@ -48,11 +48,13 @@ public class AccountAfterUpdateTriggerHandler extends TriggerHandlerBase {
 	* @description Batch Apex Entry point for trigger handling
 	* @param TriggerParameters Contains the trigger parameters
 	*/
+	/*
 	public override void batchEntry(TriggerParameters tp) {
 		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.batchEntry');
 		System.debug('This is an example for batch entry code...');
 		DiagnosticsInstrumentation.Pop();
 	}
+	*/
 
 	/**
 	* @author Scott Covert
@@ -60,11 +62,13 @@ public class AccountAfterUpdateTriggerHandler extends TriggerHandlerBase {
 	* @description Future Entry point for trigger handling
 	* @param TriggerParameters Contains the trigger parameters
 	*/
+	/*
 	public override void futureEntry(TriggerParameters tp) {
 		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.futureEntry');
 		System.debug('This is an example for future entry code...');
 		DiagnosticsInstrumentation.Pop();
 	}
+	*/
 
 	/**
 	* @author Scott Covert
@@ -72,10 +76,12 @@ public class AccountAfterUpdateTriggerHandler extends TriggerHandlerBase {
 	* @description Scheduled Apex Entry point for trigger handling
 	* @param TriggerParameters Contains the trigger parameters
 	*/
+	/*
 	public override void scheduledEntry(TriggerParameters tp) {
 		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.scheduledEntry');
 		System.debug('This is an example for scheduled entry code...');
 		DiagnosticsInstrumentation.Pop();
 	}
+	*/
 	
 }
