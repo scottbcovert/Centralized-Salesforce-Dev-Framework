@@ -1,10 +1,10 @@
 /**
 * @author Scott Covert
 * @date 11/9/2014
-* @description This class provides unit tests for the framework.
+* @description This class provides sample unit tests for Accounts
 */
 @isTest (oninstall=true seealldata=false)
-public with sharing class CustomFrameworkTest { 
+public with sharing class AccountsTest { 
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
@@ -16,7 +16,7 @@ public with sharing class CustomFrameworkTest {
 		acct.Name = 'testacct1';
 		insert acct;
 
-		Account acct2 = [SELECT Id, Name FROM Account WHERE Name = 'testacct1'];
+		Account acct2 = (Account)SObjectService.RunQuery('Account', new List<String>{'Id','Name'}, new List<String>(), 'Name = \'testacct1\'', 'Name', 1)[0];
 		acct2.Name = 'testacct2';
 		update acct2;
 
@@ -48,16 +48,16 @@ public with sharing class CustomFrameworkTest {
 		TriggerHandlerBase.SimulateConcurrencyError = null;
 		update acct2;
 		
-		acct2 = [SELECT Id, Name, Website FROM Account WHERE Name = 'testacct2'];
+		acct2 = (Account)SObjectService.RunQuery('Account', null, false, 'Name = \'testacct2\'', null, null)[0];
 		System.assertEquals(acct2.Website,'www.salesforce.com','Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		delete acct2;
 		
-		list<Account> allAccounts = [SELECT Id FROM Account];
+		list<Account> allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null);
 		System.assert(allAccounts.isEmpty(),'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		
 		allAccounts = [SELECT Id FROM Account ALL ROWS];
 		undelete allAccounts;
-		allAccounts = [SELECT Id FROM Account];
+		allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null);
 		
 		// Simulate RepeatingFuture
 		AsyncRequest__c ar = new AsyncRequest__c(AsyncType__c='Future:Default',Scheduled_Time__c = System.now(),Params__c=allAccounts[0].Id);

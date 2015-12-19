@@ -43,7 +43,7 @@ public class TriggerParameters {
 		this.newList = nlist;
 		this.oldMap = omap;
 		this.newMap = nmap;
-		this.triggerObject = UtilityClass.getSObjectTypeName((this.oldList != null && this.oldList.size() > 0) ? this.oldList[0] : this.newList[0]);
+		this.triggerObject = SObjectService.TypeName((this.oldList != null && this.oldList.size() > 0) ? this.oldList[0] : this.newList[0]);
 		if (ib & ii) tEvent = TriggerEvent.beforeInsert;
 		else if (ib && iu) tEvent = TriggerEvent.beforeUpdate;
 		else if (ib && id) tEvent = TriggerEvent.beforeDelete;
