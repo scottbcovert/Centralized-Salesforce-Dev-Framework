@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-    <customSettingsType>List</customSettingsType>
-    <customSettingsVisibility>Public</customSettingsVisibility>
-    <description>Application Configuration</description>
-    <enableFeeds>false</enableFeeds>
+    <description>Application configuration</description>
     <fields>
         <fullName>DebugInfoRecipientEmails__c</fullName>
         <description>Email(s) to Receive DebugInfo Logs</description>
@@ -12,7 +9,6 @@
         <label>DebugInfo Recipient Email(s)</label>
         <length>255</length>
         <required>false</required>
-        <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
@@ -23,7 +19,6 @@
         <externalId>false</externalId>
         <inlineHelpText>Email DebugInfo Log to DebugInfo Recipient Email(s)</inlineHelpText>
         <label>Email DebugInfo Log</label>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -32,7 +27,6 @@
         <description>Set to True to Enable Diagnostics</description>
         <externalId>false</externalId>
         <label>Enable Diagnostics</label>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -42,7 +36,6 @@
         <externalId>false</externalId>
         <inlineHelpText>Warning: All logic will be turned off if enabled!</inlineHelpText>
         <label>KillSwitch</label>
-        <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
     <fields>
@@ -54,7 +47,6 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
@@ -67,9 +59,9 @@
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
-        <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>
     </fields>
-    <label>App Config</label>
+    <label>Config</label>
+    <pluralLabel>Config</pluralLabel>
 </CustomObject>
