@@ -59,7 +59,7 @@ public class DiagnosticsInstrumentation {
 	*/
 	public static void Debug(String debugString)
 	{
-		if(!AppConfigSupport.DiagnosticsEnabled) return;
+		if(!ConfigService.DiagnosticsEnabled) return;
 		if(DiagnosticLog==null) DiagnosticLog = new List<DiagnosticEntry>();
 		DiagnosticLog.add(new DiagnosticEntry(debugString));
 		System.Debug(LoggingLevel.Info, debugString);
@@ -79,14 +79,14 @@ public class DiagnosticsInstrumentation {
 		ExceptionTrace = ' Exception occurred line ' + ex.getLineNumber() + ' - ' + ex.getMessage();
 		for(String st: StackTrace) ExceptionTrace += ' | ' + st;
 		ExceptionTrace += ' |\n ';
-		if(AppConfigSupport.DiagnosticsEnabled){
+		if(ConfigService.DiagnosticsEnabled){
 			try {
 				insert dbg;
 			}
 			catch(System.Exception e){
 				// Unable to insert debug info
 			}
-			if (AppConfigSupport.DebugInfoMaxNum!=null || AppConfigSupport.DebugInfoMaxAge!=null)
+			if (ConfigService.DebugInfoMaxNum!=null || ConfigService.DebugInfoMaxAge!=null)
 				CheckDebugInfoLog();
 		}
 	}
@@ -142,12 +142,12 @@ public class DiagnosticsInstrumentation {
 	private static void CheckDebugInfoLog()
 	{
 		list<DebugInfo__c> debugInfoLog = [SELECT Id, Name, CreatedDate, DebugData__c FROM DebugInfo__c ORDER BY CreatedDate ASC];
-		if (!debugInfoLog.isEmpty() && AppConfigSupport.DebugInfoMaxNum!=null && debugInfoLog.size()>=AppConfigSupport.DebugInfoMaxNum){
+		if (!debugInfoLog.isEmpty() && ConfigService.DebugInfoMaxNum!=null && debugInfoLog.size()>=ConfigService.DebugInfoMaxNum){
 			ClearDebugInfoLog(debugInfoLog);
 		}
-		else if (!debugInfoLog.isEmpty() && AppConfigSupport.DebugInfoMaxAge!=null && (debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * AppConfigSupport.DebugInfoMaxAge)) || Test.isRunningTest()){
+		else if (!debugInfoLog.isEmpty() && ConfigService.DebugInfoMaxAge!=null && (debugInfoLog[0].CreatedDate <= System.now().addDays(-1 * ConfigService.DebugInfoMaxAge)) || Test.isRunningTest()){
 			list<DebugInfo__c> debugInfoToDelete = new list<DebugInfo__c>();
-			DateTime maxAge = System.now().addDays(-1 * AppConfigSupport.DebugInfoMaxAge);
+			DateTime maxAge = System.now().addDays(-1 * ConfigService.DebugInfoMaxAge);
 			for (DebugInfo__c di : debugInfoLog){
 				if (di.CreatedDate <= maxAge)
 					debugInfoToDelete.add(di);
@@ -164,7 +164,7 @@ public class DiagnosticsInstrumentation {
 	*/
 	private static void ClearDebugInfoLog(list<DebugInfo__c> expiredDebugInfoLog)
 	{
-		if (AppConfigSupport.EmailDebugInfoEnabled && AppConfigSupport.DebugInfoEmailRecipients!=null && AppConfigSupport.DebugInfoEmailRecipients!=''){
+		if (ConfigService.EmailDebugInfoEnabled && ConfigService.DebugInfoEmails!=null && ConfigService.DebugInfoEmails!=''){
 			EmailDebugInfoLog(expiredDebugInfoLog);
 		}
 		if (expiredDebugInfoLog.size()>0){
@@ -188,7 +188,7 @@ public class DiagnosticsInstrumentation {
 	{
 		//Define email settings
         Messaging.SingleEmailMessage debugInfoEmail = new Messaging.SingleEmailMessage();                   
-        debugInfoEmail.setToAddresses(AppConfigSupport.DebugInfoEmailRecipients.split(';'));
+        debugInfoEmail.setToAddresses(ConfigService.DebugInfoEmails.split(';'));
         debugInfoEmail.setSubject('DebugInfo Log for ' + UserInfo.getOrganizationName() + '(' + UserInfo.getOrganizationId() + ')');
         String emailMessage = 'Attached is the DebugInfo log that was cleared for ' + UserInfo.getOrganizationName() + '(' + UserInfo.getOrganizationId() + ')';
         debugInfoEmail.setPlainTextBody(emailMessage);

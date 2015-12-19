@@ -21,26 +21,23 @@ public with sharing class CustomFrameworkTest {
 		update acct2;
 
 		// KillSwitch
-		AppConfigSupport.testConfig = null;
-		AppConfigSupport.testKillSwitch = true;
+		ConfigService.testKillSwitch = true;
 		update acct2;
-		
-		// Rest Test App Config
-		AppConfigSupport.testConfig = null;
-		AppConfigSupport.testKillSwitch = false;
+
+		ConfigService.resetTestSettings();
 
 		// Fake Exception
 		TriggerFactory.FakeException = true;
 
 		// DebugInfo Log
-		AppConfigSupport.testEmailDebugInfoLog = true;
-		AppConfigSupport.testDebugInfoMaxAge = 7;
-		AppConfigSupport.testDebugInfoRecipientEmails = 'test@test.com';	
+		ConfigService.testEmailDebugInfoLog = true;
+		ConfigService.testDebugInfoMaxAge = 7;
+		ConfigService.testDebugInfoEmails = 'test@test.com';
 		update acct2;
 
-		// Reset Test App Config
-		AppConfigSupport.testConfig = null;
 		TriggerFactory.FakeException = false;
+		ConfigService.resetTestSettings();
+
 		update acct2;
 
 		// Simulate Concurrency Error

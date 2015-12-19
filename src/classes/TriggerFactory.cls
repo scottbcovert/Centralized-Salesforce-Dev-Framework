@@ -19,7 +19,7 @@ public with sharing class TriggerFactory
 	*/
     public static void createTriggerDispatcher(Schema.sObjectType soType)
     {
-        if (!AppConfigSupport.KillSwitchEnabled && !AppConfigSupport.BypassObjects.contains(soType)){
+        if (!ConfigService.KillSwitchEnabled && !ConfigService.BypassObjects.contains(soType)){
             // Initial Push to Diagnostic Log
             String beforeOrAfter = 'Before ';
             if (Trigger.isAfter)
