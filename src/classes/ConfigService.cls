@@ -247,8 +247,11 @@ public class ConfigService {
 			Map<String,Schema.SObjectType> gd = Schema.getGlobalDescribe();
 		    for(String sObj : gd.keySet()){
 		        Schema.DescribeSObjectResult sObjResult =  gd.get(sObj).getDescribe(); 
-		        this.KeyPrefixByObjectName.put(sObjResult.getKeyPrefix(),sObjResult.getName().toLowerCase());
-		        this.ObjectNameByKeyPrefix.put(sObjResult.getName().toLowerCase(),sObjResult.getKeyPrefix());		        
+		        // Some objects (such as history objects) may return null key prefix
+		        if (sObjResult.getKeyPrefix()!=null){
+		        	this.KeyPrefixByObjectName.put(sObjResult.getKeyPrefix(),sObjResult.getName().toLowerCase());
+		        	this.ObjectNameByKeyPrefix.put(sObjResult.getName().toLowerCase(),sObjResult.getKeyPrefix());		        
+		        }
 		    }		    
 		}
 	}
