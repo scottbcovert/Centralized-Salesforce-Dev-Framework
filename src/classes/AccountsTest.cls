@@ -7,7 +7,7 @@
 public with sharing class AccountsTest { 
 	
 	/** 
-    * @author Scott Covert - Tython Co.
+    * @author Scott Covert
     * @date 12/20/2015
     * @description This method creates test records for all other test methods in this class
     */
