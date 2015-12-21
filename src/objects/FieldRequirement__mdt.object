@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Custom requirement(s) for field values</description>
+    <fields>
+        <fullName>Field__c</fullName>
+        <description>Field name for the field requirement</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Field name for the field requirement</inlineHelpText>
+        <label>Field</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>RequiredValue__c</fullName>
+        <description>Required value for the field requirement</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Required value for the field requirement</inlineHelpText>
+        <label>Required Value</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SObject__c</fullName>
+        <description>SObject name (lower-case) for the field requirement</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>SObject name (lower-case) for the field requirement</inlineHelpText>
+        <label>SObject</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Field Requirement</label>
+    <pluralLabel>Field Requirements</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

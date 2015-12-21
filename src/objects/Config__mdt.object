@@ -5,6 +5,7 @@
         <fullName>DebugInfoRecipientEmails__c</fullName>
         <description>Email(s) to Receive DebugInfo Logs</description>
         <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
         <inlineHelpText>Email(s) to Receive DebugInfo Logs</inlineHelpText>
         <label>DebugInfo Recipient Email(s)</label>
         <length>255</length>
@@ -17,6 +18,7 @@
         <defaultValue>false</defaultValue>
         <description>Email DebugInfo Log to DebugInfo Recipient Email(s)</description>
         <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
         <inlineHelpText>Email DebugInfo Log to DebugInfo Recipient Email(s)</inlineHelpText>
         <label>Email DebugInfo Log</label>
         <type>Checkbox</type>
@@ -26,6 +28,7 @@
         <defaultValue>false</defaultValue>
         <description>Set to True to Enable Diagnostics</description>
         <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
         <label>Enable Diagnostics</label>
         <type>Checkbox</type>
     </fields>
@@ -34,6 +37,7 @@
         <defaultValue>false</defaultValue>
         <description>KillSwitch for Application</description>
         <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
         <inlineHelpText>Warning: All logic will be turned off if enabled!</inlineHelpText>
         <label>KillSwitch</label>
         <type>Checkbox</type>
@@ -42,6 +46,7 @@
         <fullName>MaxDebugInfoAge__c</fullName>
         <description>Maximum DebugInfo Age (in days) Before Clearing (Leave blank for no limit)</description>
         <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
         <inlineHelpText>Maximum DebugInfo Age (in days) Before Clearing (Leave blank for no limit)</inlineHelpText>
         <label>Max DebugInfo Age</label>
         <precision>18</precision>
@@ -54,6 +59,7 @@
         <fullName>MaxDebugInfoRecords__c</fullName>
         <description>Maximum DebugInfo Records Before Clearing (Leave blank for no limit)</description>
         <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
         <inlineHelpText>Maximum DebugInfo Records Before Clearing (Leave blank for no limit)</inlineHelpText>
         <label>Max DebugInfo Records</label>
         <precision>18</precision>
@@ -64,4 +70,5 @@
     </fields>
     <label>Config</label>
     <pluralLabel>Config</pluralLabel>
+    <visibility>Public</visibility>
 </CustomObject>

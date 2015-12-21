@@ -5,6 +5,22 @@
 */
 @isTest (oninstall=true seealldata=false)
 public with sharing class AccountsTest { 
+	
+	/** 
+    * @author Scott Covert - Tython Co.
+    * @date 12/20/2015
+    * @description This method creates test records for all other test methods in this class
+    */
+    @testSetup private static void testSetup()
+    {
+    	if (!TestVerificationService.ShouldExecute('SObjectServiceTest.testSetup')) return;
+
+        // Generate account records from factory
+        list<Account> testAccounts = (list<Account>)DataFactoryService.CreateRecords('Account',new list<String>{'Name'},'TestAcct',1);
+        // Insert test accounts
+        insert testAccounts;
+    }
+
 	/** 
 	* @author Scott Covert
 	* @date 11/9/2014
@@ -12,17 +28,16 @@ public with sharing class AccountsTest {
 	*/
 	@isTest (oninstall=true seealldata=false)
 	public static void testAccountTrigger() {
-		Account acct = new Account();
-		acct.Name = 'testacct1';
-		insert acct;
+		
+		if (!TestVerificationService.ShouldExecute('AccountsTest.testAccountTrigger')) return;
 
-		Account acct2 = (Account)SObjectService.RunQuery('Account', new List<String>{'Id','Name'}, new List<String>(), 'Name = \'testacct1\'', 'Name', 1)[0];
-		acct2.Name = 'testacct2';
-		update acct2;
+		Account testAccount = (Account)SObjectService.RunQuery('Account', new List<String>{'Id','Name'}, new List<String>(), 'Name = \'TestAcct1\'', 'Name', 1)[0];
+		testAccount.Name = 'TestAcct2';
+		update testAccount;
 
 		// KillSwitch
 		ConfigService.testKillSwitch = true;
-		update acct2;
+		update testAccount;
 
 		ConfigService.resetTestSettings();
 
@@ -33,27 +48,27 @@ public with sharing class AccountsTest {
 		ConfigService.testEmailDebugInfoLog = true;
 		ConfigService.testDebugInfoMaxAge = 7;
 		ConfigService.testDebugInfoEmails = 'test@test.com';
-		update acct2;
+		update testAccount;
 
 		TriggerFactory.FakeException = false;
 		ConfigService.resetTestSettings();
 
-		update acct2;
+		update testAccount;
 
 		// Simulate Concurrency Error
 		TriggerHandlerBase.SimulateConcurrencyError = new List<Boolean>{true};
-		update acct2;
+		update testAccount;
 
 		// Reset Simulate Concurrency Error Variable
 		TriggerHandlerBase.SimulateConcurrencyError = null;
-		update acct2;
+		update testAccount;
 		
-		acct2 = (Account)SObjectService.RunQuery('Account', null, false, 'Name = \'testacct2\'', null, null)[0];
-		System.assertEquals(acct2.Website,'www.salesforce.com','Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
-		delete acct2;
+		testAccount = (Account)SObjectService.RunQuery('Account', null, false, 'Name = \'TestAcct2\'', null, null)[0];
+		System.assertEquals(testAccount.Website,'www.salesforce.com','Error in testAccountTrigger - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
+		delete testAccount;
 		
 		list<Account> allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null);
-		System.assert(allAccounts.isEmpty(),'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
+		System.assert(allAccounts.isEmpty(),'Error in testAccountTrigger - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		
 		allAccounts = [SELECT Id FROM Account ALL ROWS];
 		undelete allAccounts;
@@ -63,6 +78,6 @@ public with sharing class AccountsTest {
 		AsyncRequest__c ar = new AsyncRequest__c(AsyncType__c='Future:Default',Scheduled_Time__c = System.now(),Params__c=allAccounts[0].Id);
 		insert ar;
 		RepeatingFuture.Start();
-		System.assert(!allAccounts.isEmpty(),'Error in testAccountTrigger. Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
+		System.assert(!allAccounts.isEmpty(),'Error in testAccountTrigger - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 	}
 }

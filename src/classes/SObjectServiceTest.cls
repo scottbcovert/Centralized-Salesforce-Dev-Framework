@@ -12,20 +12,22 @@ public with sharing class SObjectServiceTest {
 	*/
 	@isTest (oninstall=true seealldata=false)
 	public static void testSObjectService() {
+
+		if (!TestVerificationService.ShouldExecute('SObjectServiceTest.testSobjectService')) return;
 		
 		// Execute query methods
 		list<SObject> accountList = SObjectService.RunQuery('Account', new list<String>{'Id'}, new list<String>(), null, null, null);
 		accountList = SObjectService.RunQuery('Account', null, false, SObjectService.BuildRelationshipFilter(new list<String>{'001123456789123456'}, 'Id'), 'Name', 1);
-		System.assertEquals(0,accountList.size(),'Problem with SObjectService query methods');
+		System.assertEquals(0,accountList.size(),'Error in SObjectService query methods - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		// Execute PrefixKey method
 		String accountPrefix =  SObjectService.PrefixKey('Account');
-		System.assertEquals('001',accountPrefix,'Problem with SObjectService.KeyPrefix method');
+		System.assertEquals('001',accountPrefix,'Error in SObjectService.KeyPrefix - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		// Execute ObjectName method
 		String objectName = SObjectService.ObjectName('001');
-		System.assertEquals('account',objectName,'Problem with SObjectService.ObjectName method');
+		System.assertEquals('account',objectName,'Error in SObjectService.ObjectName - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		// Execute VerifyFieldType method
 		Boolean nameIsString = SObjectService.VerifyFieldType('Account', 'Name', Schema.DisplayType.STRING);
-		System.assertEquals(true,nameIsString,'Problem with SObjectService.VerifyFieldType method');
+		System.assertEquals(true,nameIsString,'Error in SObjectService.VerifyFieldType - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);		
 		
 	}
 }
