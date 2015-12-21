@@ -16,10 +16,12 @@ The main goals of this project were to add the following concepts (again taken f
 * Concurrency Handling via Silent Logging & Recovery
 * Comprehensive Application KillSwitch
 * Apex Enterprise Patterns: Domain, Selector, & Service Layer
+* Centralized Factory for Test Data Generation
+* Custom Metadata Type Utilization for Obeying Org-Specific Field Requirements
+* Custom Metadata Type Utilization for Disabling Tests on an Org-Specific Basis
 
 Next Steps - Time permitting here are some other concepts/items I'd like to add to the framework:
 
-* Static Resource/Custom Metadata Type Utilization for Loading Test Data & Toggling Features/Tests
 * Configuration Page for Updating Config Settings
 
 [Documentation](http://scottbcovert.github.io/Centralized-Salesforce-Dev-Framework/) was created using ApexDocs (originally developed by Aslam Bari and later improved by Steve Cox) and has been included as a zip file in the project
