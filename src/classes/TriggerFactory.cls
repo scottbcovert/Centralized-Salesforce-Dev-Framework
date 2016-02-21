@@ -34,7 +34,7 @@ public with sharing class TriggerFactory
             else if (Trigger.isUndelete){
                 dmlState = 'Undelete';
             }
-            String soTypeName = soType.getDescribe().getName();
+            String soTypeName = soType.getDescribe().getLocalName();
             DiagnosticsInstrumentation.Push(beforeOrAfter + dmlState + ' Trigger for ' + soTypeName + ' Object');
             try{
                 ITriggerDispatcher dispatcher = getTriggerDispatcher(soType);
