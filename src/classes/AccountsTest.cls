@@ -13,7 +13,7 @@ public with sharing class AccountsTest {
     */
     @testSetup private static void testSetup()
     {
-    	if (!TestVerificationService.ShouldExecute('SObjectServiceTest.testSetup')) return;
+    	if (!TestVerificationService.ShouldExecute('AccountsTest.testSetup')) return;
 
         // Generate account records from factory
         list<Account> testAccounts = (list<Account>)DataFactoryService.CreateRecords('Account',new list<String>{'Name'},'TestAcct',1);

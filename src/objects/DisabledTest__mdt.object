@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Test Methods to be Disabled</description>
+    <description>Test method(s) to be disabled</description>
     <fields>
         <fullName>TestMethod__c</fullName>
-        <description>Full Test Method Name (Class.Method) to be Disabled</description>
+        <description>Full test method name (class.method, lower-case) to be disabled</description>
         <externalId>false</externalId>
         <fieldManageability>SubscriberControlled</fieldManageability>
-        <inlineHelpText>Full Test Method Name (Class.Method) to be Disabled</inlineHelpText>
+        <inlineHelpText>Full test method name (class.method, lower-case) to be disabled</inlineHelpText>
         <label>Test Method</label>
         <length>255</length>
         <required>false</required>
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>Disabled Tests</label>
+    <label>Disabled Test</label>
     <pluralLabel>Disabled Tests</pluralLabel>
     <visibility>Public</visibility>
 </CustomObject>
