@@ -56,6 +56,16 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
+        <fullName>Aborted__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Signifies this async request job has been aborted due to too many failed attempts</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Signifies this async request job has been aborted due to too many failed attempts</inlineHelpText>
+        <label>Aborted</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>AsyncType__c</fullName>
         <externalId>false</externalId>
         <label>AsyncType</label>
@@ -68,6 +78,47 @@
         </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Attempts__c</fullName>
+        <defaultValue>0</defaultValue>
+        <description>Number of times this async request has been attempted</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Number of times this async request has been attempted</inlineHelpText>
+        <label>Attempts</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>JobId__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <description>Id of the Queueable Apex job associated with this async request, if any</description>
+        <externalId>true</externalId>
+        <inlineHelpText>Id of the Queueable Apex job associated with this async request, if any</inlineHelpText>
+        <label>Job Id</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>MaxAttempts__c</fullName>
+        <defaultValue>1</defaultValue>
+        <description>Determines the maximum number of times this async request should run before it is aborted</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Determines the maximum number of times this async request should run before it is aborted</inlineHelpText>
+        <label>Max Attempts</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Params__c</fullName>

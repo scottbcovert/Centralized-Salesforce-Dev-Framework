@@ -19,10 +19,10 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	*/
 	public void execute(SchedulableContext sc)
     {
+    	List<AsyncRequest__c> requests = [Select Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false ORDER BY Scheduled_Time__c ASC LIMIT 1];
     	try{
     		System.abortJob(sc.getTriggerID());
-    		List<AsyncRequest__c> requests = [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c ORDER BY Scheduled_Time__c ASC LIMIT 1];
-	        if (requests.size()!=0 && requests[0].AsyncType__c.contains(FUTURE_TOKEN)){
+    		if (requests.size()!=0 && requests[0].AsyncType__c.contains(FUTURE_TOKEN)){
 	        	// Initialize Repeating Future Calls
 	        	RepeatingFuture.Start();
 	        }
@@ -33,6 +33,14 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
     	}
     	catch(Exception e){
     		// Error -> Preserve AsyncRequests & Reschedule
+    		// Increment attempts counter
+    		requests[0].Attempts__c = requests[0].Attempts__c + 1;
+    		if (requests[0].Attempts__c >= requests[0].MaxAttempts__c)
+    		{
+    			// This async request has failed the maximum number of times allowed; abort
+    			requests[0].Aborted__c = true;
+    		}
+    		update requests;
     		DiagnosticsInstrumentation.DebugException(e);
             DiagnosticsInstrumentation.PopAll();
             ScheduleHandler.StartScheduler();
@@ -57,7 +65,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	*/
     public static void StartScheduler(){
 
-		List<AsyncRequest__c> requests = [Select Id, AsyncType__c, Scheduled_Time__c, Params__c FROM AsyncRequest__c ORDER BY Scheduled_Time__c ASC LIMIT 1];
+		List<AsyncRequest__c> requests = [Select Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false ORDER BY Scheduled_Time__c ASC LIMIT 1];
 		if(requests.size()==0) return;
 
     	if(ScheduledInContext) return;
