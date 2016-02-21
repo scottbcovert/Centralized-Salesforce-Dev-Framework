@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Callout requests made on behalf of the application</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Duration__c</fullName>
+        <description>Duration of the callout in milliseconds</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Duration of the callout in milliseconds</inlineHelpText>
+        <label>Duration</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Endpoint__c</fullName>
+        <description>Endpoint URL of external server&apos;s API</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Endpoint URL of external server&apos;s API</inlineHelpText>
+        <label>Endpoint</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>JobId__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <description>Id of the Queueable Apex job associated with this callout, if any</description>
+        <externalId>true</externalId>
+        <inlineHelpText>Id of the Queueable Apex job associated with this callout, if any</inlineHelpText>
+        <label>Job Id</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Method__c</fullName>
+        <description>HTTP Method to be used for the callout (GET, POST, etc.)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>HTTP Method to be used for the callout (GET, POST, etc.)</inlineHelpText>
+        <label>Method</label>
+        <picklist>
+            <picklistValues>
+                <fullName>GET</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>POST</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PUT</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>PATCH</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>DELETE</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Request__c</fullName>
+        <description>Request made to external server</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Request made to external server</inlineHelpText>
+        <label>Request</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Response__c</fullName>
+        <description>External server response from callout</description>
+        <externalId>false</externalId>
+        <inlineHelpText>External server response from callout</inlineHelpText>
+        <label>Response</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Sent__c</fullName>
+        <description>Timestamp of when the callout was sent</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Timestamp of when the callout was sent</inlineHelpText>
+        <label>Sent</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Queued</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OK</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>KO</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Failed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Timeout__c</fullName>
+        <description>Timeout for the callout in seconds</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Timeout for the callout in seconds</inlineHelpText>
+        <label>Timeout</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <label>Callout Request</label>
+    <nameField>
+        <displayFormat>CR-{0000}</displayFormat>
+        <label>Callout Request</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Callout Requests</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>
