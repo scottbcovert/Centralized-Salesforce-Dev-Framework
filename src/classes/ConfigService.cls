@@ -75,7 +75,9 @@ public class ConfigService {
 	{
 		get
 		{
-			return Settings.KeyPrefixByObjectName;
+			if (KeyPrefixByObject!=null) return KeyPrefixByObject;
+			BuildSchemaMaps();
+			return KeyPrefixByObject;
 		}
 	}
 
@@ -84,7 +86,9 @@ public class ConfigService {
 	{
 		get
 		{
-			return Settings.ObjectNameByKeyPrefix;
+			if (ObjectByKeyPrefix!=null) return ObjectByKeyPrefix;
+			BuildSchemaMaps();
+			return ObjectByKeyPrefix;			
 		}
 	}
 
@@ -162,6 +166,26 @@ public class ConfigService {
 
 	/**
 	* @author Scott Covert
+	* @date 12/21/2015
+	* @description Builds Schema Map Static Variables
+	*/
+	private static void BuildSchemaMaps() {
+		ConfigService.KeyPrefixByObject = new Map<String,String>();
+		ConfigService.ObjectByKeyPrefix = new Map<String,String>();
+		// Determine key prefix by object (and vice versa) mappings
+		Map<String,Schema.SObjectType> gd = Schema.getGlobalDescribe();
+	    for(String sObj : gd.keySet()){
+	        Schema.DescribeSObjectResult sObjResult =  gd.get(sObj).getDescribe(); 
+	        // Some objects (such as history objects) may return null key prefix
+	        if (sObjResult.getKeyPrefix()!=null){
+	        	ConfigService.KeyPrefixByObject.put(sObjResult.getKeyPrefix(),sObjResult.getName().toLowerCase());
+	        	ConfigService.ObjectByKeyPrefix.put(sObjResult.getName().toLowerCase(),sObjResult.getKeyPrefix());		        
+	        }
+	    }
+	}
+
+	/**
+	* @author Scott Covert
 	* @date 12/17/2015
 	* @description Resets test setting values to their defaults
 	*/
@@ -193,10 +217,6 @@ public class ConfigService {
 		private String AppNamespace;	
 		/** Licensed User State */
 		private Boolean UserLicensed;
-		/** Key Prefix by Object Map */
-		private Map<String,String> KeyPrefixByObjectName;
-		/** Object by Key Prefix Map */
-		private Map<String,String> ObjectNameByKeyPrefix;
 		/** Person Account Feature State */
 		private Boolean PersonAccountState;
 		/** MultiCurrency Feature State */
@@ -240,19 +260,7 @@ public class ConfigService {
 	        }
 	        this.AppNamespace = ( !String.isBlank(this.AppNamespacePrefix) ) ? this.AppNamespacePrefix + '__' : '';
 	        // Determine if current user is licensed for namespace, if any
-	        this.UserLicensed = Test.isRunningTest() ? testLicensedUser : ( !String.isBlank(this.AppNamespacePrefix) ) ? UserInfo.isCurrentUserLicensed(this.AppNamespacePrefix) : true;
-	        // Determine key prefix by object mapping
-			this.KeyPrefixByObjectName = new Map<String,String>();
-			this.ObjectNameByKeyPrefix = new Map<String,String>();
-			Map<String,Schema.SObjectType> gd = Schema.getGlobalDescribe();
-		    for(String sObj : gd.keySet()){
-		        Schema.DescribeSObjectResult sObjResult =  gd.get(sObj).getDescribe(); 
-		        // Some objects (such as history objects) may return null key prefix
-		        if (sObjResult.getKeyPrefix()!=null){
-		        	this.KeyPrefixByObjectName.put(sObjResult.getKeyPrefix(),sObjResult.getName().toLowerCase());
-		        	this.ObjectNameByKeyPrefix.put(sObjResult.getName().toLowerCase(),sObjResult.getKeyPrefix());		        
-		        }
-		    }		    
+	        this.UserLicensed = Test.isRunningTest() ? testLicensedUser : ( !String.isBlank(this.AppNamespacePrefix) ) ? UserInfo.isCurrentUserLicensed(this.AppNamespacePrefix) : true;	        		    
 		}
 	}
 	
