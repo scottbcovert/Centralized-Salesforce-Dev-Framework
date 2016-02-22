@@ -45,12 +45,16 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
     		DiagnosticsInstrumentation.DebugException(e);
             DiagnosticsInstrumentation.PopAll();
         }
-        // Increment attempts counter
-		ar.Attempts__c++;
-        // This async request has failed the maximum number of times allowed; abort
-        if (ar.Attempts__c >= ar.MaxAttempts__c) ar.Aborted__c = true;
-		// Only bother to update async request if it is not set to be deleted -> This also must be done after processing of the async request in case a callout was made (SF does not allow DML prior to a callout)
-        if (!arsToDelete.containsKey(ar.Id)) update ar;				
+        // Verify that an async request record was processed
+        if (ar!=null)
+        {
+            // Increment attempts counter
+    		ar.Attempts__c++;
+            // This async request has failed the maximum number of times allowed; abort
+            if (ar.Attempts__c >= ar.MaxAttempts__c) ar.Aborted__c = true;
+    		// Only bother to update async request if it is not set to be deleted -> This also must be done after processing of the async request in case a callout was made (SF does not allow DML prior to a callout)
+            if (!arsToDelete.containsKey(ar.Id)) update ar;				
+        }
         if (!arsToDelete.isEmpty())
         {
             // Delete executed AsyncRequests and empty them from the recycling bin
