@@ -22,7 +22,7 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
         AsyncRequest__c ar;
         for (AsyncRequest__c asyncRequest : asyncRequests)
         {
-            if (ar.JobId__c == sc.getJobId()) ar = asyncRequest;
+            if (asyncRequest.JobId__c == sc.getJobId()) ar = asyncRequest;
         }
         // If the running job has no matching async request, then this must be a chained, cleanup job so the earliest scheduled async request should be processed
         if (ar==null) ar = asyncRequests[0];
