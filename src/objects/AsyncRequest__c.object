@@ -130,6 +130,16 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
+        <fullName>Running__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>Signifies this async request job is currently running so as to prevent concurrency issues</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Signifies this async request job is currently running so as to prevent concurrency issues</inlineHelpText>
+        <label>Running</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Scheduled_Time__c</fullName>
         <defaultValue>NOW()</defaultValue>
         <externalId>false</externalId>
