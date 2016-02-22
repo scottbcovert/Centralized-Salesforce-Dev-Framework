@@ -57,9 +57,16 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
         }
         if (!arsToDelete.isEmpty())
         {
-            // Delete executed AsyncRequests and empty them from the recycling bin
-            delete arsToDelete.values();
-            Database.emptyRecycleBin(arsToDelete.values());
+            try
+            {
+                // Delete executed AsyncRequests and empty them from the recycling bin
+                delete arsToDelete.values();
+                Database.emptyRecycleBin(arsToDelete.values());
+            }
+            catch(Exception e)
+            {
+                // The async request record must have already been processed and deleted
+            }
         }
         // Chain job to process additional async requests
         chainJob();
