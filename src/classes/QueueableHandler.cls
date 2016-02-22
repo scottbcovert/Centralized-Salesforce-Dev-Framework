@@ -15,7 +15,7 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
 	*/
 	public void execute(QueueableContext sc)
     {
-    	List<AsyncRequest__c> asyncRequests = [SELECT Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, Aborted__c FROM AsyncRequest__c WHERE Running__c = false AND Aborted__c = false ORDER BY Scheduled_Time__c ASC LIMIT 1];
+    	List<AsyncRequest__c> asyncRequests = [SELECT Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, Running__c, Aborted__c FROM AsyncRequest__c WHERE Running__c = false AND Aborted__c = false ORDER BY Scheduled_Time__c ASC LIMIT 1];
     	// End chaining if all asynchronous requests have been or are being processed
         if (asyncRequests.size() == 0) return;
         // Otherwise, try to match the currently running queueable job with its matching async request to prevent concurrency issues
