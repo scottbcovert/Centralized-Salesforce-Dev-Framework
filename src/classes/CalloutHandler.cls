@@ -44,7 +44,9 @@ public class CalloutHandler {
     @future(callout=true)
 	public static void Start(Id crId)
     {    	
-		// Query for Callout Request
+		// Verify kill switch is not enabled
+        if (ConfigService.KillSwitchEnabled) return;
+        // Query for Callout Request
         CalloutRequest__c cr = [SELECT Id, JobId__c, Endpoint__c, Method__c, Timeout__c, Status__c, Sent__c FROM CalloutRequest__c WHERE Id = :crId LIMIT 1];
         // Perform HTTP Callout
     	Long start = System.now().getTime();
