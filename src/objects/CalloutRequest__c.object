@@ -127,28 +127,6 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Request__c</fullName>
-        <description>Request made to external server</description>
-        <externalId>false</externalId>
-        <inlineHelpText>Request made to external server</inlineHelpText>
-        <label>Request</label>
-        <length>32768</length>
-        <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>3</visibleLines>
-    </fields>
-    <fields>
-        <fullName>Response__c</fullName>
-        <description>External server response from callout</description>
-        <externalId>false</externalId>
-        <inlineHelpText>External server response from callout</inlineHelpText>
-        <label>Response</label>
-        <length>32768</length>
-        <trackTrending>false</trackTrending>
-        <type>LongTextArea</type>
-        <visibleLines>3</visibleLines>
-    </fields>
-    <fields>
         <fullName>Sent__c</fullName>
         <description>Timestamp of when the callout was sent</description>
         <externalId>false</externalId>
