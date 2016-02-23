@@ -33,7 +33,7 @@ public class CalloutHandler {
     /** Constant representing the DELETE HTTP Method */
     public static final String DELETE_METHOD = 'DELETE';
     /** Constant represengint the production endpoint for callouts to use */
-    public static final String ENDPOINT = '';
+    public static final String ENDPOINT = 'http://httpbin.org/delay/10';
 
 	/**
 	* @author Scott Covert
