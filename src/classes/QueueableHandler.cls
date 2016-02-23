@@ -15,6 +15,28 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
 	*/
 	public void execute(QueueableContext sc)
     {
+        // Verify kill switch is not enabled
+        if (ConfigService.KillSwitchEnabled)
+        {
+            // Flush Async Queue
+            try
+            {
+                // Since some returned async requests may be processing the FOR UPDATE query could result in locking errors
+                Map<Id,AsyncRequest__c> asyncRequestsToFlush = new Map<Id,AsyncRequest__c>([SELECT Id, Aborted__c FROM AsyncRequest__c WHERE IsDeleted = false AND Aborted__c = false FOR UPDATE]);
+                if (!asyncRequestsToFlush.isEmpty())
+                {
+                    for (AsyncRequest__c ar : asyncRequestsToFlush.values()) ar.Aborted__c = true;
+                }
+                update asyncRequestsToFlush.values();
+            }
+            catch(Exception e)
+            {
+                // Error -> A locking error has occurred; the queue will have to be flushed on the next cleanup job
+                DiagnosticsInstrumentation.DebugException(e);
+                DiagnosticsInstrumentation.PopAll();
+            }
+            return;
+        }
         // Instantiate null async request for later processing
         AsyncRequest__c ar;
         // Instantiate empty map to store processed async requests ready for deletion
