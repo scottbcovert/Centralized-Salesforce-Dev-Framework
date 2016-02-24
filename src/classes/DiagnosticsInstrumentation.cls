@@ -83,12 +83,13 @@ public class DiagnosticsInstrumentation {
 			try {
 				insert dbg;
 			}
-			catch(System.Exception e){
+			catch(Exception e){
 				// Unable to insert debug info
 			}
 			if (ConfigService.DebugInfoMaxNum!=null || ConfigService.DebugInfoMaxAge!=null)
 				CheckDebugInfoLog();
 		}
+		DiagnosticsInstrumentation.PopAll();
 	}
 
 	/** 
@@ -120,7 +121,7 @@ public class DiagnosticsInstrumentation {
 	* @description Returns multi-line string representation of diagnostic log
 	* @return String Indented log of diagnostic entries
 	*/
-	private static String CurrentLog()
+	public static String CurrentLog()
 	{
 		if(DiagnosticLog == null) return null;
 		String spaces = '                                                                        ';
@@ -172,7 +173,7 @@ public class DiagnosticsInstrumentation {
 				delete expiredDebugInfoLog;
 				Database.emptyRecycleBin(expiredDebugInfoLog);
 			}
-			catch(System.Exception e){
+			catch(Exception ex){
 				// Unable to delete debug info log
 			}
 		}
