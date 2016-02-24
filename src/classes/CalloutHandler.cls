@@ -162,7 +162,7 @@ public class CalloutHandler {
     }
 
     /**
-    * @author Scott Covert - Tython Co.
+    * @author Scott Covert
     * @date 2/23/2016
     * @description Creates Response Body Attachments for Callout Requests
     * @param String HTTP response body
