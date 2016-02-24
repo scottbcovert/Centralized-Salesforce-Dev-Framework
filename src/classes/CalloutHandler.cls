@@ -143,8 +143,8 @@ public class CalloutHandler {
     private static void processFailure(CalloutRequest__c cr, Exception ex)
     {
         cr.Status__c = FAILED_STATUS;
-        if (DiagnosticsInstrumentation.CurrentLog()!=null) createResponseBody('Diagnostic Log\n' + DiagnosticsInstrumentation.CurrentLog(), cr.Id);        
         DiagnosticsInstrumentation.DebugException(ex);
+        if (DiagnosticsInstrumentation.CurrentLog()!=null) createResponseBody('Diagnostic Log\n' + DiagnosticsInstrumentation.CurrentLog(), cr.Id);
     }
 
     /**
