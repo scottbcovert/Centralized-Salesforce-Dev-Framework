@@ -19,12 +19,15 @@ public with sharing class AccountHelper {
 			newAccount.Id = acct.Id;
 			newAccount.Website = 'www.salesforce.com';
 			resultMap.put(newAccount.Id, newAccount);
-		}
-		Id jobId = System.enqueueJob(new QueueableDispatcher());
-		AsyncRequest__c ar = new AsyncRequest__c(JobId__c = jobId, AsyncType__c = QueueableHandler.CALLOUT_TOKEN);
-		CalloutRequest__c cr = new CalloutRequest__c(JobId__c = jobId, Endpoint__c = CalloutHandler.ENDPOINT, Method__c = CalloutHandler.GET_METHOD, Status__c = CalloutHandler.QUEUED_STATUS, Timeout__c = (CalloutHandler.MAX_CALLOUT_TIME/1000) );
-		insert ar;		
-		insert cr;		
+		}				
+		/* Sample code for performing callout asynchronously through queueable apex
+		** To use, uncomment and set CalloutHandler.ENDPOINT; HTTP method will default to GET
+		*/
+		/*
+		CalloutRequest__c cr = new CalloutRequest__c(Endpoint__c = CalloutHandler.ENDPOINT);		
+		QueueableHandler.startCalloutJob(QueueableHandler.CALLOUT_TOKEN, cr);
+		// QueueableHandler.startCalloutJob(QueueableHandler.ASYNC_TOKEN + QueueableHandler.CALLOUT_TOKEN, cr);
+		*/
 		return resultMap;
 	}
 }
