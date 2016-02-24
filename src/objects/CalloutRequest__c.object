@@ -78,7 +78,7 @@
         <label>Duration</label>
         <precision>18</precision>
         <required>false</required>
-        <scale>0</scale>
+        <scale>3</scale>
         <trackTrending>false</trackTrending>
         <type>Number</type>
         <unique>false</unique>

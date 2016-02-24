@@ -157,7 +157,7 @@ public class CalloutHandler {
     private static void updateCalloutRequest(CalloutRequest__c cr, Long start)
     {
         cr.Sent__c = System.now();
-        cr.Duration__c = cr.Sent__c.getTime() - start;
+        cr.Duration__c = (cr.Sent__c.getTime() - start) / 1000;
         update cr;
     }
 
