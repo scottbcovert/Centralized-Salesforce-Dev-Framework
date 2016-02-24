@@ -8,7 +8,7 @@ All credit for the work done in this project is due to them; all blame for any b
 The main goals of this project were to add the following concepts (again taken from Dan's **Advanced Apex Programming** and Andy's **Force.com Enterprise Architecture**) to Hari's foundational framework:
 
 * Entry Points for Asynchronous, Batch, & Scheduled Apex Operations
-* Centralized Async Handling & Chaining via Scheduler Ping-Pong (Scheduled Apex <--> Batch/Future Apex Handler)
+* Centralized Async Handling & Chaining via Queueable Apex
 * Centralized Diagnostic Infrastructure
 * Centralized Exception Handling
 * Custom Stack Tracing for Debugging
