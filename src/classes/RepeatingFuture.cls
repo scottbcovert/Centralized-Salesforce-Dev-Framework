@@ -17,7 +17,7 @@ public class RepeatingFuture {
     public static void Start(){
         List<AsyncRequest__c> arsToDelete = new List<AsyncRequest__c>();
         String futureType = FUTURE_TOKEN + '%';
-        for (AsyncRequest__c ar : [SELECT Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false AND AsyncType__c LIKE :futureType ORDER BY Scheduled_Time__c ASC LIMIT 1]){
+        for (AsyncRequest__c ar : [SELECT Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false AND AsyncType__c LIKE :futureType ORDER BY ScheduledTime__c ASC LIMIT 1]){
             if (ar.AsyncType__c == TYPE_DEFAULT){
                 if (ar.Params__c!=null){
                     List<Id> idsToProcess = ar.Params__c.split(',');

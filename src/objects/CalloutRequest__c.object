@@ -53,9 +53,23 @@
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
-    <enableSearch>false</enableSearch>
+    <enableSearch>true</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>AsyncRequest__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Associated async request, if any, for this callout request. Note that after processing the async request will be deleted, clearing this value.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Associated async request, if any, for this callout request. Note that after processing the async request will be deleted, clearing this value.</inlineHelpText>
+        <label>Async Request</label>
+        <referenceTo>AsyncRequest__c</referenceTo>
+        <relationshipLabel>Callout Requests</relationshipLabel>
+        <relationshipName>CalloutRequests</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
     <fields>
         <fullName>Duration__c</fullName>
         <description>Duration of the callout in milliseconds</description>
@@ -82,19 +96,6 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>JobId__c</fullName>
-        <caseSensitive>true</caseSensitive>
-        <description>Id of the Queueable Apex job associated with this callout, if any</description>
-        <externalId>true</externalId>
-        <inlineHelpText>Id of the Queueable Apex job associated with this callout, if any</inlineHelpText>
-        <label>Job Id</label>
-        <length>255</length>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>true</unique>
-    </fields>
-    <fields>
         <fullName>Method__c</fullName>
         <description>HTTP Method to be used for the callout (GET, POST, etc.)</description>
         <externalId>false</externalId>
@@ -103,7 +104,7 @@
         <picklist>
             <picklistValues>
                 <fullName>GET</fullName>
-                <default>false</default>
+                <default>true</default>
             </picklistValues>
             <picklistValues>
                 <fullName>POST</fullName>
@@ -143,7 +144,7 @@
         <picklist>
             <picklistValues>
                 <fullName>Queued</fullName>
-                <default>false</default>
+                <default>true</default>
             </picklistValues>
             <picklistValues>
                 <fullName>OK</fullName>
@@ -176,6 +177,11 @@
         <unique>false</unique>
     </fields>
     <label>Callout Request</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
     <nameField>
         <displayFormat>CR-{0000}</displayFormat>
         <label>Callout Request</label>

@@ -23,7 +23,7 @@ public class RepeatingBatch implements Database.Batchable<sObject>, Database.All
     */
     public Database.QueryLocator start(Database.BatchableContext BC){
         DateTime now = System.now();
-        return Database.getQueryLocator('SELECT Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false AND (NOT (AsyncType__c LIKE \'' + FUTURE_TOKEN + '%\')) AND Scheduled_Time__c <= :now');
+        return Database.getQueryLocator('SELECT Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false AND (NOT (AsyncType__c LIKE \'' + FUTURE_TOKEN + '%\')) AND ScheduledTime__c <= :now');
     }
     
     /**

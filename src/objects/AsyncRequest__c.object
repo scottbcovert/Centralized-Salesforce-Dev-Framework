@@ -95,16 +95,15 @@
     </fields>
     <fields>
         <fullName>JobId__c</fullName>
-        <caseSensitive>true</caseSensitive>
-        <description>Id of the Queueable Apex job associated with this async request, if any</description>
-        <externalId>true</externalId>
-        <inlineHelpText>Id of the Queueable Apex job associated with this async request, if any</inlineHelpText>
+        <description>Id of the root Queueable Apex job associated with this async request, if any</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Id of the root Queueable Apex job associated with this async request, if any</inlineHelpText>
         <label>Job Id</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
-        <unique>true</unique>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>MaxAttempts__c</fullName>
@@ -130,7 +129,7 @@
         <visibleLines>3</visibleLines>
     </fields>
     <fields>
-        <fullName>Scheduled_Time__c</fullName>
+        <fullName>ScheduledTime__c</fullName>
         <defaultValue>NOW()</defaultValue>
         <externalId>false</externalId>
         <label>Scheduled Time</label>
@@ -138,13 +137,18 @@
         <trackTrending>false</trackTrending>
         <type>DateTime</type>
     </fields>
-    <label>AsyncRequest</label>
+    <label>Async Request</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
     <nameField>
         <displayFormat>AR-{0000}</displayFormat>
-        <label>AsyncRequest</label>
+        <label>Async Request</label>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>AsyncRequests</pluralLabel>
+    <pluralLabel>Async Requests</pluralLabel>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
     <startsWith>Vowel</startsWith>

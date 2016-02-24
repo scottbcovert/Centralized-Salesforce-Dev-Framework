@@ -66,6 +66,11 @@
         <visibleLines>3</visibleLines>
     </fields>
     <label>Debug Info</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
     <nameField>
         <displayFormat>{0}</displayFormat>
         <label>Debug Info Entry</label>

@@ -19,7 +19,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	*/
 	public void execute(SchedulableContext sc)
     {
-    	List<AsyncRequest__c> requests = [Select Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false ORDER BY Scheduled_Time__c ASC LIMIT 1];
+    	List<AsyncRequest__c> requests = [Select Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false ORDER BY ScheduledTime__c ASC LIMIT 1];
     	try{
     		System.abortJob(sc.getTriggerID());
     		if (requests.size()!=0 && requests[0].AsyncType__c.contains(FUTURE_TOKEN)){
@@ -64,7 +64,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	*/
     public static void StartScheduler(){
 
-		List<AsyncRequest__c> requests = [Select Id, AsyncType__c, JobId__c, Scheduled_Time__c, Params__c, Attempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false ORDER BY Scheduled_Time__c ASC LIMIT 1];
+		List<AsyncRequest__c> requests = [Select Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false ORDER BY ScheduledTime__c ASC LIMIT 1];
 		if(requests.size()==0) return;
 
     	if(ScheduledInContext) return;
@@ -78,7 +78,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 			List<AsyncApexJob> apexJobs = [Select ID, ApexClass.Name from AsyncApexJob WHERE Status in :activeJobStates AND ApexClass.Name = 'RepeatingBatch'];
 			if(apexJobs.size()>0) return; // Batch job is running
 			// Check if current job is set to execute first  
-			if(jobs[0].NextFireTime <= requests[0].Scheduled_Time__c.addSeconds(MINIMUM_WAIT_TIME)) return; // Current job is still earliest in the queue
+			if(jobs[0].NextFireTime <= requests[0].ScheduledTime__c.addSeconds(MINIMUM_WAIT_TIME)) return; // Current job is still earliest in the queue
     	}
     	// At this point any existing job should be deleted
 		for (CronTrigger job : jobs){
@@ -87,7 +87,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
         
 		try{
 			// Don't allow jobs to be scheduled in the past
-			DateTime scheduledTime = requests[0].Scheduled_Time__c;
+			DateTime scheduledTime = requests[0].ScheduledTime__c;
 			if (scheduledTime < System.now()){
 				scheduledTime = System.now();
 			}

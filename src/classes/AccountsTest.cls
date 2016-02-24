@@ -75,7 +75,7 @@ public with sharing class AccountsTest {
 		allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null);
 		
 		// Simulate RepeatingFuture
-		AsyncRequest__c ar = new AsyncRequest__c(AsyncType__c='Future:Default',Scheduled_Time__c = System.now(),Params__c=allAccounts[0].Id);
+		AsyncRequest__c ar = new AsyncRequest__c(AsyncType__c='Future:Default',ScheduledTime__c = System.now(),Params__c=allAccounts[0].Id);
 		insert ar;
 		RepeatingFuture.Start();
 		System.assert(!allAccounts.isEmpty(),'Error in testAccountTrigger - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
