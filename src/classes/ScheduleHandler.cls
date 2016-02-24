@@ -31,7 +31,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 	        	RepeatingBatch.StartTheBatch();
 	        }
     	}
-    	catch(Exception e){
+    	catch(Exception ex){
     		// Error -> Preserve AsyncRequests & Reschedule
     		// Increment attempts counter
     		requests[0].Attempts__c = requests[0].Attempts__c + 1;
@@ -41,8 +41,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
     			requests[0].Aborted__c = true;
     		}
     		update requests;
-    		DiagnosticsInstrumentation.DebugException(e);
-            DiagnosticsInstrumentation.PopAll();
+    		DiagnosticsInstrumentation.DebugException(ex);
             ScheduleHandler.StartScheduler();
     	}
     }
@@ -105,10 +104,9 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
 				System.schedule('ASync_Process_Schedule', GetSchedulerExpression(scheduledTime.addSeconds(MINIMUM_WAIT_TIME)), new ScheduledDispatcher());
 			}
 		}
-		catch(Exception e){
+		catch(Exception ex){
 			// Concurrency Error -> Ignore
-			DiagnosticsInstrumentation.DebugException(e);
-            DiagnosticsInstrumentation.PopAll();
+			DiagnosticsInstrumentation.DebugException(ex);
 		}
     }
 

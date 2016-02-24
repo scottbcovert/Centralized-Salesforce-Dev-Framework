@@ -46,7 +46,6 @@ public with sharing class TriggerFactory
             }
             catch(Exception ex){
                 DiagnosticsInstrumentation.DebugException(ex);
-                DiagnosticsInstrumentation.PopAll();
             }
         }
     }
