@@ -89,7 +89,7 @@ public class DiagnosticsInstrumentation {
 			if (ConfigService.DebugInfoMaxNum!=null || ConfigService.DebugInfoMaxAge!=null)
 				CheckDebugInfoLog();
 		}
-		DiagnosticsInstrumentation.PopAll();
+		PopAll();
 	}
 
 	/** 
