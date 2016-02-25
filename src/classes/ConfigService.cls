@@ -20,6 +20,10 @@ public class ConfigService {
 	@TestVisible private static Integer testDebugInfoMaxAge;
 	/** DebugInfoMaxNum value for testing */
 	@TestVisible private static Integer testDebugInfoMaxNum;
+	/** Organization Id value for testing */
+	@TestVisible private static String testOrgId;
+	/** Organization Name value for testing */
+	@TestVisible private static String testOrgName;
 	/** Packaged Apex Class Name */
 	private static final String PACKAGED_CLASS_NAME = 'ConfigService';
 	/** Obfuscated Body Text */
@@ -164,6 +168,30 @@ public class ConfigService {
 		}
 	}
 
+	/** Package Version Number */
+	public static String PackageVersion
+	{
+		get{
+			return Settings.PackageVersionNumber!=null ? String.valueOf(Settings.PackageVersionNumber) : '';
+		}
+	}
+
+	/** Organization Id */
+	public static String OrgId
+	{
+		get{
+			return Settings.OrganizationId;
+		}
+	}
+
+	/** Organization Name */
+	public static String OrgName
+	{
+		get{
+			return Settings.OrganizationName;
+		}
+	}
+
 	/**
 	* @author Scott Covert
 	* @date 12/21/2015
@@ -199,6 +227,8 @@ public class ConfigService {
 		testKillSwitch = false;
 		testDebugInfoMaxAge = null;
 		testDebugInfoMaxNum = null;
+		testOrgId = null;
+		testOrgName = null;
 	}
 	
 	/**
@@ -232,7 +262,13 @@ public class ConfigService {
 		/** Maximum age in days of DebugInfo records */
 		private Integer DebugInfoAgeMax;
 		/** Maximum number of DebugInfo records */
-		private Integer DebugInfoNumMax;		
+		private Integer DebugInfoNumMax;
+		/** Package Version */
+		private Version PackageVersionNumber;
+		/** Organization Id */
+		private String OrganizationId;
+		/** Organization Name */
+		private String OrganizationName;
 
 		/**
 		* @author Scott Covert
@@ -248,6 +284,8 @@ public class ConfigService {
 			this.KillSwitch = Test.isRunningTest() ? testKillSwitch : defaultSettings.KillSwitch__c;
 			this.DebugInfoAgeMax = Test.isRunningTest() ? testDebugInfoMaxAge : (Integer)defaultSettings.MaxDebugInfoAge__c;
 			this.DebugInfoNumMax = Test.isRunningTest() ? testDebugInfoMaxNum : (Integer)defaultSettings.MaxDebugInfoRecords__c;
+			this.OrganizationId = Test.isRunningTest() ? testOrgId : UserInfo.getOrganizationId();
+			this.OrganizationName = Test.isRunningTest() ? testOrgName : UserInfo.getOrganizationName();
 			// Determine namespace
 			this.AppNamespacePrefix = '';
 			for (ApexClass ac : PACKAGED_CLASS){
@@ -255,6 +293,15 @@ public class ConfigService {
 	                if (ac.NameSpacePrefix!=null){
 	                    // Namespace exists
 	                    this.AppNamespacePrefix = ac.NameSpacePrefix.toLowerCase();	                    
+	                    // Attempt to determine package version
+	                    try 
+	                    {
+	                    	this.PackageVersionNumber = System.requestVersion();
+	                    }
+	                    catch (System.Exception e)
+	                    {
+	                    	// This must not be the packaging org
+	                    }
 	                }
 	            }
 	        }
