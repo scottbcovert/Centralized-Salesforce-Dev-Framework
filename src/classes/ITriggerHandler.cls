@@ -40,6 +40,14 @@ public interface ITriggerHandler {
 
 	/** 
 	* @author Scott Covert
+	* @date 2/26/2016
+	* @description Called by queueable function
+	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
+	*/
+	void queueableEntry(TriggerParameters tp);
+
+	/** 
+	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Called by scheduled apex
 	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.

@@ -55,6 +55,17 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 
 	/** 
 	* @author Scott Covert
+	* @date 2/26/2016
+	* @description Called by queueable function. The trigger handlers can choose to ignore this method if they
+	*				want queueable entries to behave no differently than main entries.
+	* @param TriggerParameters The trigger parameters such as the list of records before and after the update.
+	*/
+	public virtual void queueableEntry(TriggerParameters tp) {
+		mainEntry(tp);
+	}
+
+	/** 
+	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Called by scheduled apex. The trigger handlers can choose to ignore this method if they
 	*				want scheduled entries to behave no differently than main entries.

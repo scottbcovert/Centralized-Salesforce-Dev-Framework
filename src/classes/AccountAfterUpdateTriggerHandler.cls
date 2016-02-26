@@ -72,6 +72,20 @@ public class AccountAfterUpdateTriggerHandler extends TriggerHandlerBase {
 
 	/**
 	* @author Scott Covert
+	* @date 2/26/2016
+	* @description Queueable Entry point for trigger handling
+	* @param TriggerParameters Contains the trigger parameters
+	*/
+	/*
+	public override void queueableEntry(TriggerParameters tp) {
+		DiagnosticsInstrumentation.Push('AccountAfterUpdateTriggerHandler.queueableEntry');
+		System.debug('This is an example for queueable entry code...');
+		DiagnosticsInstrumentation.Pop();
+	}
+	*/
+
+	/**
+	* @author Scott Covert
 	* @date 11/9/2014
 	* @description Scheduled Apex Entry point for trigger handling
 	* @param TriggerParameters Contains the trigger parameters
