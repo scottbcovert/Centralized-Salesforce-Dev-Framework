@@ -33,11 +33,11 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
         Map<Id,AsyncRequest__c> arsToDelete = new Map<Id,AsyncRequest__c>();
         try{
             // Query for the earliest scheduled async request that still needs to be processed
-            List<AsyncRequest__c> asyncRequests = [SELECT Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, Aborted__c FROM AsyncRequest__c WHERE IsDeleted = false AND Aborted__c = false ORDER BY ScheduledTime__c ASC LIMIT 1];                        
+            List<AsyncRequest__c> asyncRequests = [SELECT Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE IsDeleted = false AND Aborted__c = false ORDER BY ScheduledTime__c ASC LIMIT 1];                        
             // End chaining if all asynchronous requests have been or are being processed
             if (asyncRequests.isEmpty()) return;
             // Unfortunately the ORDER BY clause is not allowed while pessimistically locking rows in SOQL, so the query must be repeated to prevent concurrency issues
-            asyncRequests = [SELECT Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false AND Id = :asyncRequests[0].Id LIMIT 1 FOR UPDATE];
+            asyncRequests = [SELECT Id, AsyncType__c, JobId__c, ScheduledTime__c, Params__c, Attempts__c, MaxAttempts__c, Aborted__c FROM AsyncRequest__c WHERE Aborted__c = false AND Id = :asyncRequests[0].Id LIMIT 1 FOR UPDATE];
             // Since the first SOQL query ordered by scheduled time was not row locking we must verify again that asyncRequests is not empty
             if (asyncRequests.isEmpty()) return;
             // Set async request to be processed
