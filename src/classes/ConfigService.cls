@@ -293,15 +293,20 @@ public class ConfigService {
 	                if (ac.NameSpacePrefix!=null){
 	                    // Namespace exists
 	                    this.AppNamespacePrefix = ac.NameSpacePrefix.toLowerCase();	                    
-	                    // Attempt to determine package version
-	                    try 
-	                    {
+	                    // Attempt to determine package version (http://bit.ly/1oFbMAl)
+	                    Boolean isManaged;
+	                    try{
+					        UserInfo.isCurrentUserLicensed(this.AppNamespacePrefix);
+					        isManaged = true;
+					    }
+					    catch(System.TypeException e)
+					    {
+					        // Not in a managed namespace
+					        isManaged = false;
+					    }
+	                    if (isManaged){
 	                    	this.PackageVersionNumber = System.requestVersion();
-	                    }
-	                    catch (System.Exception e)
-	                    {
-	                    	// This must not be the packaging org
-	                    }
+	                    }	                   
 	                }
 	            }
 	        }
