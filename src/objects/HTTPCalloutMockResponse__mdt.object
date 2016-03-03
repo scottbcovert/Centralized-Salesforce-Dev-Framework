@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>HTTP Callout mock response(s) to be used by unit tests</description>
+    <fields>
+        <fullName>Body__c</fullName>
+        <description>Body to use in HTTP mock response</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>Body to use in HTTP mock response</inlineHelpText>
+        <label>Body</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>ContentType__c</fullName>
+        <description>Content type to use in HTTP mock response</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>Content type to use in HTTP mock response</inlineHelpText>
+        <label>ContentType</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Endpoint__c</fullName>
+        <description>Endpoint URL of external server&apos;s API to be mocked</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>Endpoint URL of external server&apos;s API to be mocked</inlineHelpText>
+        <label>Endpoint</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Method__c</fullName>
+        <description>HTTP method to respond to (GET, POST, etc.)</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>HTTP method to respond to (GET, POST, etc.)</inlineHelpText>
+        <label>Method</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>StatusCode__c</fullName>
+        <description>HTTP status code to send in mock response</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>HTTP status code to send in mock response</inlineHelpText>
+        <label>Status Code</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <label>HTTP Callout Mock Response</label>
+    <pluralLabel>HTTP Callout Mock Responses</pluralLabel>
+    <visibility>Protected</visibility>
+</CustomObject>
