@@ -72,9 +72,9 @@
     </fields>
     <fields>
         <fullName>Duration__c</fullName>
-        <description>Duration of the callout in milliseconds</description>
+        <description>Duration of the callout in seconds</description>
         <externalId>false</externalId>
-        <inlineHelpText>Duration of the callout in milliseconds</inlineHelpText>
+        <inlineHelpText>Duration of the callout in seconds</inlineHelpText>
         <label>Duration</label>
         <precision>18</precision>
         <required>false</required>
