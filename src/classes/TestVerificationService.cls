@@ -26,6 +26,10 @@ public class TestVerificationService {
 				return false;
 			}
         }
+        
+        // Setup HTTP Mock Responses
+        Test.setMock(HttpCalloutMock.class, new HTTPCalloutMockService());
+
         DiagnosticsInstrumentation.Pop();
         return true;
     }
