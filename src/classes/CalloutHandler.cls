@@ -5,7 +5,7 @@
 */
 public class CalloutHandler {
     /** Constant to represent the default callout time limit */
-    private static final Integer DEFAULT_CALLOUT_TIME = 10000;
+    @TestVisible private static final Integer DEFAULT_CALLOUT_TIME = 10000;
     /** Constant representing the conent type for JSON */
     private static final String JSON_CONTENT_TYPE = 'application/json';
     /** Constant representing the OK status for callout requests */
