@@ -31,7 +31,7 @@ public with sharing class AccountsTest {
 		
 		if (!TestVerificationService.ShouldExecute('AccountsTest.testAccountTrigger')) return;
 
-		Account testAccount = (Account)SObjectService.RunQuery('Account', new List<String>{'Id','Name'}, new List<String>(), 'Name = \'TestAcct1\'', 'Name', 1)[0];
+		Account testAccount = (Account)SObjectService.RunQuery('Account', new List<String>{'Id','Name'}, new List<String>(), 'Name = \'TestAcct1\'', new List<String>{'Name'}, SObjectService.ASC_DIR_ORDER, 1)[0];
 		testAccount.Name = 'TestAcct2';
 		update testAccount;
 
@@ -63,16 +63,16 @@ public with sharing class AccountsTest {
 		TriggerHandlerBase.SimulateConcurrencyError = null;
 		update testAccount;
 		
-		testAccount = (Account)SObjectService.RunQuery('Account', null, false, 'Name = \'TestAcct2\'', null, null)[0];
+		testAccount = (Account)SObjectService.RunQuery('Account', null, false, 'Name = \'TestAcct2\'', null, null, null)[0];
 		System.assertEquals(testAccount.Website,'www.salesforce.com','Error in testAccountTrigger - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		delete testAccount;
 		
-		list<Account> allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null);
+		list<Account> allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null, null);
 		System.assert(allAccounts.isEmpty(),'Error in testAccountTrigger - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		
 		allAccounts = [SELECT Id FROM Account ALL ROWS];
 		undelete allAccounts;
-		allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null);
+		allAccounts = SObjectService.RunQuery('Account', null, false, null, null, null, null);
 		
 		// Simulate RepeatingFuture
 		AsyncRequest__c ar = new AsyncRequest__c(AsyncType__c='Future:Default',ScheduledTime__c = System.now(),Params__c=allAccounts[0].Id);

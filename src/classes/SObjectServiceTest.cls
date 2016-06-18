@@ -16,8 +16,8 @@ public with sharing class SObjectServiceTest {
 		if (!TestVerificationService.ShouldExecute('SObjectServiceTest.testSobjectService')) return;
 		
 		// Execute query methods
-		list<SObject> accountList = SObjectService.RunQuery('Account', new list<String>{'Id'}, new list<String>(), null, null, null);
-		accountList = SObjectService.RunQuery('Account', null, false, SObjectService.BuildRelationshipFilter(new list<String>{'001123456789123456'}, 'Id'), 'Name', 1);
+		list<SObject> accountList = SObjectService.RunQuery('Account', new list<String>{'Id'}, new list<String>(), null, null, null, 2*SObjectService.SOQL_ROW_GOV_LIMIT);
+		accountList = SObjectService.RunQuery('Account', null, false, SObjectService.BuildRelationshipFilter(new list<String>{'001123456789123456'}, 'Id'), new List<String>{'Name'}, SObjectService.ASC_DIR_ORDER, 1);
 		System.assertEquals(0,accountList.size(),'Error in SObjectService query methods - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		// Execute PrefixKey method
 		String accountPrefix =  SObjectService.PrefixKey('Account');

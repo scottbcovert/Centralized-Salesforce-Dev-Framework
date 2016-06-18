@@ -5,7 +5,17 @@
 */
 
 public with sharing class SObjectService {	
-	
+	/** Constant representing the max records to be retrieved by a single SOQL query */
+	public static final Integer MAX_ROWS = 10000;
+	/** Constant representing the governor limit for SOQL rows returned in a single execution context */
+	public static final Integer SOQL_ROW_GOV_LIMIT = 50000;
+	/** Constant representing the SOQL query syntax for returning results in ascending order */
+	public static final String ASC_DIR_ORDER = 'ASC';
+	/** Constant representing the SOQL query syntax for returning results in descending order */
+	public static final String DESC_DIR_ORDER = 'DESC';
+	/** Constant representing the default sort order to use for SOQL queries */
+	public static final String DEFAULT_DIR_ORDER = ASC_DIR_ORDER;
+
 	/**
 	* @author Scott Covert
 	* @date 12/17/2015
@@ -55,6 +65,8 @@ public with sharing class SObjectService {
 		Map<String, Schema.SobjectField> fields = FieldMap(objectAPIName);
 		if (!fields.isEmpty()){
 			for (String s : new list<String>(fields.keyset())){
+				// Ensure all fields are stored in lowercase
+				s = s.toLowerCase();
 				Schema.DescribeFieldResult dfr = fields.get(s).getDescribe();
 				if ( Test.isRunningTest() && dfr.getName().contains('__c') && dfr.getLocalName() == dfr.getName() ){
 					// Don't include custom fields that live outside the package in queries during testing
@@ -84,10 +96,17 @@ public with sharing class SObjectService {
 	*/
 	public static list<String> FieldList(String objectAPIName, list<String> fieldList){
 		DiagnosticsInstrumentation.Push('SObjectService.FieldList');
+		// Prevent null reference error in case of null field list
+		if (fieldList==null || fieldList.isEmpty()){
+			DiagnosticsInstrumentation.Pop();
+			return null;
+		}
 		Set<String> accessibleFields = new Set<String>(FieldList(objectAPIName, true));
 		// Return fields from given list that exist in the accessible field set 
 		set<String> fieldSet = new set<String>();
 		for (String field : fieldList){
+			// Convert to lowercase
+			field = field.toLowerCase();
 			if (accessibleFields.contains(field)) fieldSet.add(field);
 		}
 		DiagnosticsInstrumentation.Pop();
@@ -102,11 +121,12 @@ public with sharing class SObjectService {
 	* @param Set A set of fields from the given SObject that should be included within the query
 	* @param Set A set of any relationship fields, such as those from parent records, that should be included in the query
 	* @param String The filter clause for the query
-	* @param String The order by clause for the query
+	* @param Set A set of fields to be used in the order by clause for the query
+	* @param String The direction (ascending or descending) to use when ordering values
 	* @param String The limit clause for the query
 	* @return String A dyanmic SOQL query
 	*/
-	private static String BuildSoqlString(String objectAPIName, set<String> objectFieldList, set<String> relationshipFields, String filter, String orderBy, Integer limitTo){
+	private static String BuildSoqlString(String objectAPIName, set<String> objectFieldList, set<String> relationshipFields, String filter, set<String> orderByFieldSet, String orderDirection, Integer limitTo){
 		DiagnosticsInstrumentation.Push('SObjectService.BuildSoqlString');
 		String soql = 'SELECT ' + String.escapeSingleQuotes(String.join(new list<String>(objectFieldList),','));
 		if (relationshipFields!=null && !relationshipFields.isEmpty()){
@@ -116,16 +136,25 @@ public with sharing class SObjectService {
 		if (filter!=null && filter!=''){
 			soql += ' WHERE ' + filter;
 		}
-		if (orderBy!=null && orderBy!=''){
-			soql += ' ORDER BY ' + String.escapeSingleQuotes(orderBy);
+		if (orderByFieldSet!=null && !orderByFieldSet.isEmpty()) {
+			soql += ' ORDER BY ' + String.escapeSingleQuotes(String.join(new list<String>(orderByFieldSet),','));
+			if (!ASC_DIR_ORDER.equalsIgnoreCase(orderDirection) && !DESC_DIR_ORDER.equalsIgnoreCase(orderDirection)){
+				soql += ' ' + DEFAULT_DIR_ORDER;
+			}
+			else{
+				soql += ' ' + orderDirection.toUpperCase();
+			}
 		}
 		if (limitTo!=null && limitTo>0){
+			if (limitTo > SOQL_ROW_GOV_LIMIT){
+				limitTo = SOQL_ROW_GOV_LIMIT;
+			}
 			soql += ' LIMIT ' + String.escapeSingleQuotes(String.valueOf(limitTo));
 		}
-		DiagnosticsInstrumentation.Pop();
+		DiagnosticsInstrumentation.Pop();		
 		return soql;
 	}
-
+		
   	/**
 	* @author Scott Covert
 	* @date 12/17/2015
@@ -134,20 +163,24 @@ public with sharing class SObjectService {
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param Boolean Determines if text area fields should be included in query, which can greatly impact processing time and heap size
 	* @param String The filter clause for the query
-	* @param String The order by clause for the query
+	* @param List A list of fields to be used in the order by clause for the query
+	* @param String The direction (ascending or descending) to use when ordering values
 	* @param String The limit clause for the query
 	* @return String A dyanmic SOQL query
 	*/
-	private static String BuildQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, String orderBy, Integer limitTo){
+	private static String BuildQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
 		DiagnosticsInstrumentation.Push('SObjectService.BuildQuery');
+		// Determine all accessible orderBy fields
+		list<String> orderByFieldList = FieldList(objectAPIName, orderBy);
 		// Generate Dynamic SOQL Query for all accessible fields for the object
-		list<String> objectFieldSet = FieldList(objectAPIName, includeTextAreaFields);
+		list<String> objectFieldList = FieldList(objectAPIName, includeTextAreaFields);
 		DiagnosticsInstrumentation.Pop();
 		return BuildSoqlString(objectAPIName,
-			objectFieldSet!=null ? new Set<String>(objectFieldSet) : null,
+			objectFieldList!=null ? new Set<String>(objectFieldList) : null,
 			relationshipFields!=null ? new Set<String>(relationshipFields) : null,
 			filter,
-			orderBy,
+			orderByFieldList!=null ? new Set<String>(orderByFieldList) : null,
+			orderDirection,
 			limitTo);
 	}
 
@@ -159,15 +192,16 @@ public with sharing class SObjectService {
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param Boolean Determines if text area fields should be included in query, which can impact processing time and heap size
 	* @param String The filter clause for the query
-	* @param String The order by clause for the query
+	* @param List A list of fields to be used in the order by clause for the query
+	* @param String The direction (ascending or descending) to use when ordering values
 	* @param Integer The limit clause for the query
 	* @return List A list of SObjects returned by the query
 	*/
-	public static list<SObject> RunQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, String orderBy, Integer limitTo){
+	public static list<SObject> RunQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
 		DiagnosticsInstrumentation.Push('SObjectService.RunQuery');
 		// Execute Dynamic SOQL Query
 		DiagnosticsInstrumentation.Pop();
-		return Database.query( BuildQuery(objectAPIName, relationshipFields, includeTextAreaFields, filter, orderBy, limitTo) );
+		return Database.query( BuildQuery(objectAPIName, relationshipFields, includeTextAreaFields, filter, orderBy, orderDirection, limitTo) );
 	}
 
 	/**
@@ -178,20 +212,29 @@ public with sharing class SObjectService {
 	* @param List The specific list of fields from the given SObject that should be included within the query, if accessible
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param String The filter clause for the query
-	* @param String The order by clause for the query
+	* @param List A list of fields to be used in the order by clause for the query
+	* @param String The direction (ascending or descending) to use when ordering values
 	* @param String The limit clause for the query
 	* @return String A dyanmic SOQL query
 	*/
-	private static String BuildQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, String orderBy, Integer limitTo){
+	private static String BuildQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
 		DiagnosticsInstrumentation.Push('SObjectService.BuildQuery');
-		// Generate Dynamic SOQL Query for all accessible fields from the given field list
+		// Determine all accessible orderBy fields
+		list<String> orderByFieldList = FieldList(objectAPIName, orderBy);
+		// Add accessible orderBy fields to fieldList
+		if (fieldList==null)
+			fieldList = new List<String>();
+		if (orderByFieldList!=null)
+			fieldList.addAll(orderByFieldList);
+		// Generate Dynamic SOQL Query for all accessible fields from the given field list and orderBy fields
 		list<String> objectFieldList = FieldList(objectAPIName, fieldList);
 		DiagnosticsInstrumentation.Pop();
 		return BuildSoqlString(objectAPIName,
-			fieldList!=null ? new Set<String>(fieldList) : null,
+			objectFieldList!=null ? new Set<String>(objectFieldList) : null,
 			relationshipFields!=null ? new Set<String>(relationshipFields) : null,
 			filter,
-			orderBy,
+			orderByFieldList!=null ? new Set<String>(orderByFieldList) : null,
+			orderDirection,
 			limitTo);
 	}
 
@@ -203,15 +246,16 @@ public with sharing class SObjectService {
 	* @param List The specific list of fields from the given SObject that should be included within the query, if accessible
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param String The filter clause for the query
-	* @param String The order by clause for the query
+	* @param List A list of fields to be used in the order by clause for the query
+	* @param String The direction (ascending or descending) to use when ordering values
 	* @param Integer The limit clause for the query
 	* @return List A list of SObjects returned by the query
 	*/
-	public static list<SObject> RunQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, String orderBy, Integer limitTo){
+	public static list<SObject> RunQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
 		DiagnosticsInstrumentation.Push('SObjectService.RunQuery');
 		// Execute Dynamic SOQL Query
 		DiagnosticsInstrumentation.Pop();
-		return Database.query( BuildQuery(objectAPIName, fieldList, relationshipFields, filter, orderBy, limitTo) );
+		return Database.query( BuildQuery(objectAPIName, fieldList, relationshipFields, filter, orderBy, orderDirection, limitTo) );
 	}
   
 	/**
