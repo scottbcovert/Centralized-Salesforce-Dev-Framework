@@ -22,9 +22,10 @@ public with sharing class SObjectService {
 	* @description This method takes an iterable string list and a text field and returns a filter string for a dyanmic soql query
 	* @param List A list of string values to be used in creating the filter
 	* @param String The API name of the field to be querying against in the filter
+	* @param Boolean Determines if the relationship filter is inclusive (default) or exclusive
 	* @return String A filter string to be used in a dynamic SOQL query
 	*/
-	public static String BuildRelationshipFilter(list<String> valueList, String queryIdField){
+	public static String BuildRelationshipFilter(list<String> valueList, String queryIdField, Boolean inclusive){
 		DiagnosticsInstrumentation.Push('SObjectService.BuildRelationshipFilter');
 		set<String> valueSet = new set<String>();
 		for(Integer i=0; i<valueList.size(); i++){
@@ -33,8 +34,9 @@ public with sharing class SObjectService {
 		if (valueSet.isEmpty()){
 			valueSet.add('\'\'');
 		}
+		String modifier = inclusive ? '' : ' NOT';
 		DiagnosticsInstrumentation.Pop();
-		return queryIdField + ' IN (' + String.join(new list<String>(valueSet),',') + ')';
+		return queryIdField + modifier + ' IN (' + String.join(new list<String>(valueSet),',') + ')';
 	}
 
   	/**
