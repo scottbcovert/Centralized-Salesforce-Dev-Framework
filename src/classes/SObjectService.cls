@@ -144,7 +144,7 @@ public with sharing class SObjectService {
 				soql += ' ' + DEFAULT_DIR_ORDER;
 			}
 			else{
-				soql += ' ' + orderDirection.toUpperCase();
+				soql += ' ' + String.escapeSingleQuotes(orderDirection.toUpperCase());
 			}
 		}
 		if (limitTo!=null && limitTo>0){
