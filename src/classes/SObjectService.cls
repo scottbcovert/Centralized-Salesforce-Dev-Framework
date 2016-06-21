@@ -166,12 +166,13 @@ public with sharing class SObjectService {
 	* @param Set A set of fields from the given SObject that should be included within the query
 	* @param Set A set of any relationship fields, such as those from parent records, that should be included in the query
 	* @param String The filter clause for the query
-	* @param Set A set of fields to be used in the order by clause for the query
-	* @param String The direction (ascending or descending) to use when ordering values
+	* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+	* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
 	* @param String The limit clause for the query
+	* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
 	* @return String A dyanmic SOQL query
 	*/
-	private static String BuildSoqlString(String objectAPIName, set<String> objectFieldList, set<String> relationshipFields, String filter, set<String> orderByFieldSet, String orderDirection, Integer limitTo){
+	private static String BuildSoqlString(String objectAPIName, set<String> objectFieldList, set<String> relationshipFields, String filter, set<String> orderByFieldSet, String orderDirection, Integer limitTo, Boolean lockRows){
 		DiagnosticsInstrumentation.Push('SObjectService.BuildSoqlString');
 		String soql = 'SELECT ' + String.escapeSingleQuotes(String.join(new list<String>(objectFieldList),','));
 		if (relationshipFields!=null && !relationshipFields.isEmpty()){
@@ -182,19 +183,24 @@ public with sharing class SObjectService {
 			soql += ' WHERE ' + CleanseSoqlFilter(filter);
 		}
 		if (orderByFieldSet!=null && !orderByFieldSet.isEmpty()) {
-			soql += ' ORDER BY ' + String.escapeSingleQuotes(String.join(new list<String>(orderByFieldSet),','));
-			if (!ASC_DIR_ORDER.equalsIgnoreCase(orderDirection) && !DESC_DIR_ORDER.equalsIgnoreCase(orderDirection)){
-				soql += ' ' + DEFAULT_DIR_ORDER;
-			}
-			else{
-				soql += ' ' + String.escapeSingleQuotes(orderDirection.toUpperCase());
-			}
+			if (lockRows==null || !lockRows){ // ORDER BY clause is not allowed in row locking SOQL statements
+				soql += ' ORDER BY ' + String.escapeSingleQuotes(String.join(new list<String>(orderByFieldSet),','));
+				if (!ASC_DIR_ORDER.equalsIgnoreCase(orderDirection) && !DESC_DIR_ORDER.equalsIgnoreCase(orderDirection)){
+					soql += ' ' + DEFAULT_DIR_ORDER;
+				}
+				else{
+					soql += ' ' + String.escapeSingleQuotes(orderDirection.toUpperCase());
+				}
+			}				
 		}
 		if (limitTo!=null && limitTo>0){
 			if (limitTo > SOQL_ROW_GOV_LIMIT){
 				limitTo = SOQL_ROW_GOV_LIMIT;
 			}
 			soql += ' LIMIT ' + String.escapeSingleQuotes(String.valueOf(limitTo));
+		}
+		if (lockRows!=null && lockRows){
+			soql += ' FOR UPDATE';
 		}
 		DiagnosticsInstrumentation.Pop();		
 		return soql;
@@ -208,12 +214,13 @@ public with sharing class SObjectService {
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param Boolean Determines if text area fields should be included in query, which can greatly impact processing time and heap size
 	* @param String The filter clause for the query
-	* @param List A list of fields to be used in the order by clause for the query
-	* @param String The direction (ascending or descending) to use when ordering values
+	* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+	* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
 	* @param String The limit clause for the query
+	* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
 	* @return String A dyanmic SOQL query
 	*/
-	private static String BuildQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
+	private static String BuildQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
 		DiagnosticsInstrumentation.Push('SObjectService.BuildQuery');
 		// Determine all accessible orderBy fields
 		list<String> orderByFieldList = FieldList(objectAPIName, orderBy);
@@ -226,7 +233,8 @@ public with sharing class SObjectService {
 			filter,
 			orderByFieldList!=null ? new Set<String>(orderByFieldList) : null,
 			orderDirection,
-			limitTo);
+			limitTo,
+			lockRows);
 	}
 
 	/**
@@ -237,16 +245,17 @@ public with sharing class SObjectService {
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param Boolean Determines if text area fields should be included in query, which can impact processing time and heap size
 	* @param String The filter clause for the query
-	* @param List A list of fields to be used in the order by clause for the query
-	* @param String The direction (ascending or descending) to use when ordering values
+	* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+	* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
 	* @param Integer The limit clause for the query
+	* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
 	* @return List A list of SObjects returned by the query
 	*/
-	public static list<SObject> RunQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
+	public static list<SObject> RunQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
 		DiagnosticsInstrumentation.Push('SObjectService.RunQuery');
 		// Execute Dynamic SOQL Query
 		DiagnosticsInstrumentation.Pop();
-		return Database.query( BuildQuery(objectAPIName, relationshipFields, includeTextAreaFields, filter, orderBy, orderDirection, limitTo) );
+		return Database.query( BuildQuery(objectAPIName, relationshipFields, includeTextAreaFields, filter, orderBy, orderDirection, limitTo, lockRows) );
 	}
 
 	/**
@@ -257,12 +266,13 @@ public with sharing class SObjectService {
 	* @param List The specific list of fields from the given SObject that should be included within the query, if accessible
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param String The filter clause for the query
-	* @param List A list of fields to be used in the order by clause for the query
-	* @param String The direction (ascending or descending) to use when ordering values
+	* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+	* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
 	* @param String The limit clause for the query
+	* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
 	* @return String A dyanmic SOQL query
 	*/
-	private static String BuildQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
+	private static String BuildQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
 		DiagnosticsInstrumentation.Push('SObjectService.BuildQuery');
 		// Determine all accessible orderBy fields
 		list<String> orderByFieldList = FieldList(objectAPIName, orderBy);
@@ -280,7 +290,8 @@ public with sharing class SObjectService {
 			filter,
 			orderByFieldList!=null ? new Set<String>(orderByFieldList) : null,
 			orderDirection,
-			limitTo);
+			limitTo,
+			lockRows);
 	}
 
 	/**
@@ -291,16 +302,17 @@ public with sharing class SObjectService {
 	* @param List The specific list of fields from the given SObject that should be included within the query, if accessible
 	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
 	* @param String The filter clause for the query
-	* @param List A list of fields to be used in the order by clause for the query
-	* @param String The direction (ascending or descending) to use when ordering values
+	* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+	* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
 	* @param Integer The limit clause for the query
+	* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
 	* @return List A list of SObjects returned by the query
 	*/
-	public static list<SObject> RunQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo){
+	public static list<SObject> RunQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
 		DiagnosticsInstrumentation.Push('SObjectService.RunQuery');
 		// Execute Dynamic SOQL Query
 		DiagnosticsInstrumentation.Pop();
-		return Database.query( BuildQuery(objectAPIName, fieldList, relationshipFields, filter, orderBy, orderDirection, limitTo) );
+		return Database.query( BuildQuery(objectAPIName, fieldList, relationshipFields, filter, orderBy, orderDirection, limitTo, lockRows) );
 	}
   
 	/**
