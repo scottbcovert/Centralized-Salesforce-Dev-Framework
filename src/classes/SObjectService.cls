@@ -15,6 +15,8 @@ public with sharing class SObjectService {
 	public static final String DESC_DIR_ORDER = 'DESC';
 	/** Constant representing the default sort order to use for SOQL queries */
 	public static final String DEFAULT_DIR_ORDER = ASC_DIR_ORDER;
+	/** Constant instance of inner WithoutSharing class */
+	private static final WithoutSharing WithoutSharingInstance = new WithoutSharing();
 
 	/**
 	* @author Scott Covert
@@ -260,6 +262,27 @@ public with sharing class SObjectService {
 
 	/**
 	* @author Scott Covert
+	* @date 6/20/2016
+	* @description Executes a dynamic SOQL query of all accessible fields for a given SObject, ignores sharing permissions
+	* @param String SObject API name
+	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
+	* @param Boolean Determines if text area fields should be included in query, which can impact processing time and heap size
+	* @param String The filter clause for the query
+	* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+	* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
+	* @param Integer The limit clause for the query
+	* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
+	* @return List A list of SObjects returned by the query
+	*/
+	public static list<SObject> RunQueryWithoutSharing(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
+		DiagnosticsInstrumentation.Push('SObjectService.WithoutSharing.RunQueryWithoutSharing');
+		// Execute Dynamic SOQL Query, ignoring sharing permissions
+		DiagnosticsInstrumentation.Pop();
+		return WithoutSharingInstance.RunWithoutSharingQuery(objectAPIName, relationshipFields, includeTextAreaFields, filter, orderBy, orderDirection, limitTo, lockRows);
+	}
+
+	/**
+	* @author Scott Covert
 	* @date 12/17/2015
 	* @description Builds a dynamic SOQL query of the accessible fields from a specified list for a given SObject
 	* @param String SObject name
@@ -313,6 +336,27 @@ public with sharing class SObjectService {
 		// Execute Dynamic SOQL Query
 		DiagnosticsInstrumentation.Pop();
 		return Database.query( BuildQuery(objectAPIName, fieldList, relationshipFields, filter, orderBy, orderDirection, limitTo, lockRows) );
+	}
+
+	/**
+	* @author Scott Covert
+	* @date 6/20/2016
+	* @description Executes a dynamic SOQL query of the accessible fields from a specified list for a given SObject, ignores sharing permissions
+	* @param String SObject API name
+	* @param List The specific list of fields from the given SObject that should be included within the query, if accessible
+	* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
+	* @param String The filter clause for the query
+	* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+	* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
+	* @param Integer The limit clause for the query
+	* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
+	* @return List A list of SObjects returned by the query
+	*/
+	public static list<SObject> RunQueryWithoutSharing(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
+		DiagnosticsInstrumentation.Push('SObjectService.WithoutSharing.RunQueryWithoutSharing');
+		// Execute Dynamic SOQL Query, ignoring sharing permissions
+		DiagnosticsInstrumentation.Pop();
+		return WithoutSharingInstance.RunWithoutSharingQuery(objectAPIName, fieldList, relationshipFields, filter, orderBy, orderDirection, limitTo, lockRows);
 	}
   
 	/**
@@ -434,5 +478,56 @@ public with sharing class SObjectService {
       	return PersonAccountAlias(ConfigService.Namespace + genericApiName.toLowerCase())!=null ? 
       		PersonAccountAlias(ConfigService.Namespace + genericApiName.toLowerCase()) : 
       		ConfigService.Namespace + genericApiName.toLowerCase();
+    }
+
+    /**
+	* @author Scott Covert
+	* @date 6/20/2016
+	* @description Ignore class used for running queries that ignore sharing permissions
+	*/
+    private without sharing class WithoutSharing {
+
+    	/**
+		* @author Scott Covert
+		* @date 6/20/2016
+		* @description Executes a dynamic SOQL query of all accessible fields for a given SObject, ignores sharing permissions
+		* @param String SObject API name
+		* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
+		* @param Boolean Determines if text area fields should be included in query, which can impact processing time and heap size
+		* @param String The filter clause for the query
+		* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+		* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
+		* @param Integer The limit clause for the query
+		* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
+		* @return List A list of SObjects returned by the query
+		*/
+		private list<SObject> RunWithoutSharingQuery(String objectAPIName, list<String> relationshipFields, Boolean includeTextAreaFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
+			DiagnosticsInstrumentation.Push('SObjectService.WithoutSharing.RunWithoutSharingQuery');
+			// Execute Dynamic SOQL Query
+			DiagnosticsInstrumentation.Pop();
+			return Database.query( SObjectService.BuildQuery(objectAPIName, relationshipFields, includeTextAreaFields, filter, orderBy, orderDirection, limitTo, lockRows) );
+		}
+
+    	/**
+		* @author Scott Covert
+		* @date 6/20/2016
+		* @description Executes a dynamic SOQL query of the accessible fields from a specified list for a given SObject, ignores sharing permissions
+		* @param String SObject API name
+		* @param List The specific list of fields from the given SObject that should be included within the query, if accessible
+		* @param List A list of any relationship fields, such as those from parent records, that should be included in the query
+		* @param String The filter clause for the query
+		* @param Set A set of fields to be used in the order by clause for the query, ignored when locking rows
+		* @param String The direction (ascending or descending) to use when ordering values, ignored when locking rows
+		* @param Integer The limit clause for the query
+		* @param Boolean Determines if the SOQL query should perform pessimistic row locking to prevent concurrency issues
+		* @return List A list of SObjects returned by the query
+		*/
+		private list<SObject> RunWithoutSharingQuery(String objectAPIName, list<String> fieldList, list<String> relationshipFields, String filter, list<String> orderBy, String orderDirection, Integer limitTo, Boolean lockRows){
+			DiagnosticsInstrumentation.Push('SObjectService.WithoutSharing.RunWithoutSharingQuery');
+			// Execute Dynamic SOQL Query
+			DiagnosticsInstrumentation.Pop();
+			return Database.query( SObjectService.BuildQuery(objectAPIName, fieldList, relationshipFields, filter, orderBy, orderDirection, limitTo, lockRows) );
+		}
+
     }
 }
