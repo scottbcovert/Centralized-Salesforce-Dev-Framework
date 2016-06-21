@@ -58,7 +58,6 @@ public with sharing class SObjectServiceTest {
 			contactList = SObjectService.RunQuery('Contact', null, false, null, null, null, 1, false);
 			System.assertEquals(0,contactList.size(),'Error in SObjectService; query methods returning records that should not be shared - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 			contactList = SObjectService.RunQueryWithoutSharing('Contact', null, false, null, null, null, 1, false);
-			//contactList = SObjectService.RunQueryWithoutSharing('Contact', new list<String>(), false, null, null, null, 1, false);
 			System.assertNotEquals(0,contactList.size(),'Error in SObjectService; query methods hiding records due to sharing permissions that should be ignored - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 		}
 		// Execute PrefixKey method
