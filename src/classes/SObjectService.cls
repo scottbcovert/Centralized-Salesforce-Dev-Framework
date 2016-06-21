@@ -116,6 +116,49 @@ public with sharing class SObjectService {
 	}
 
 	/**
+    * @author Scott Covert
+    * @date 6/20/2016
+    * @description Generates a safe, properly escaped dynamic SOQL query filter from given, potentially unsafe clause
+    * @param String Potentially unsafe filter clause for dynamic SOQL query
+    * @return String Safe, properly single-quote escaped dyanmic SOQL query filter clause
+    */
+    private static String CleanseSoqlFilter(String filter){
+        DiagnosticsInstrumentation.Push('SObjectService.CleanseSoqlFilter');
+        // First and foremost, escape all single quotes to prevent SOQL injection
+        filter = String.escapeSingleQuotes(filter);
+        // Correct any redundancies (in case filter clause was already properly escaped) using replace method, which doesnt utilize RegEx
+        filter = filter.replace('\\\\\\\'','\\\''); // <-- Replaces instances of "\\\'" with "\'"
+        // Filters on strings should now have their literal values properly escaped, but the condition expression boundaries may not be right
+        // Example: "LIKE \' \' Example \' \'" should actually be "LIKE ' \' Example \' '"
+        // This can be corrected by using RegEx and the Pattern/Matcher classes to find instances of string filters and then adjusting the boundaries
+        Pattern valuePattern = Pattern.compile('(?im)(\\slike\\s\\\\\'|=\\s\\\\\'|\\sin\\s)[\\s\\S]+?(?=\\sand\\s|\\sor\\s|$)'); // <-- Double escaping necessary for "\" character first for string literal, and then for RegEx
+        Matcher valueMatcher = valuePattern.matcher(filter);
+        Integer indexCtr = 0;
+        String cleansedFilter = '';
+        while (valueMatcher.find()){
+            cleansedFilter += filter.substring(indexCtr,valueMatcher.start());
+            String tempMatch = valueMatcher.group();
+            // Correct first boundary using replaceFirst method, which relies on RegEx
+            tempMatch = tempMatch.replaceFirst('\\\\\'','\''); // <-- Double-escaping necessary for "\" character first for string literal, and then for RegEx: Replaces instances of "\'" with "'"
+            // Correct other boundary using lastIndexOf method, which does not utilize RegEx
+            Integer lastQuoteIndex = tempMatch.lastIndexOf('\\\''); // <-- "\" character need only be single-escaped: Replaces instances of "\'" with "'"
+            // Append additional characters after other boundary if needed
+            if (lastQuoteIndex+2 < tempMatch.length())
+                tempMatch = tempMatch.substring(0,lastQuoteIndex) + '\'' + tempMatch.substring(lastQuoteIndex+2);
+            else
+                tempMatch = tempMatch.substring(0,lastQuoteIndex) + '\'';
+            // Relationship filters utilizing the IN clause will have additional inner, comma-delimited boundaries that must be corrected
+            if (tempMatch.startsWithIgnoreCase(' in '))
+                tempMatch = tempMatch.replace('\\\',\\\'','\',\'');
+            cleansedFilter += tempMatch;
+            indexCtr = valueMatcher.end();
+        }
+        cleansedFilter += filter.substring(indexCtr);
+        DiagnosticsInstrumentation.Pop();
+        return cleansedFilter;
+    }
+
+	/**
 	* @author Scott Covert
 	* @date 12/17/2015
 	* @description Generates a dynamic SOQL query based on a given object, field list, and other parameters
@@ -136,7 +179,7 @@ public with sharing class SObjectService {
 		}
 		soql += ' FROM ' + String.escapeSingleQuotes(objectAPIName);
 		if (filter!=null && filter!=''){
-			soql += ' WHERE ' + filter;
+			soql += ' WHERE ' + CleanseSoqlFilter(filter);
 		}
 		if (orderByFieldSet!=null && !orderByFieldSet.isEmpty()) {
 			soql += ' ORDER BY ' + String.escapeSingleQuotes(String.join(new list<String>(orderByFieldSet),','));
