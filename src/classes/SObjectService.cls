@@ -109,8 +109,8 @@ public with sharing class SObjectService {
 		// Return fields from given list that exist in the accessible field set 
 		set<String> fieldSet = new set<String>();
 		for (String field : fieldList){
-			// Convert to lowercase
-			field = field.toLowerCase();
+			// Convert to safe API name
+			field = SafeName(field);
 			if (accessibleFields.contains(field)) fieldSet.add(field);
 		}
 		DiagnosticsInstrumentation.Pop();
@@ -470,7 +470,7 @@ public with sharing class SObjectService {
     private static String SafeName(String genericApiName){
       	DiagnosticsInstrumentation.Push('SObjectService.SafeName');
       	// Return non-custom API Names or API Names with the Namespace already prepended
-      	if ( !genericApiName.contains('__c') || ( !String.isBlank(ConfigService.Namespace) && genericApiName.startsWith(ConfigService.Namespace) ) ){
+      	if ( ( !genericApiName.contains('__c') && !genericApiName.contains('__mdt')) || ( !String.isBlank(ConfigService.Namespace) && genericApiName.startsWith(ConfigService.Namespace) ) ){
       		DiagnosticsInstrumentation.Pop();
       	    return PersonAccountAlias(genericApiName)!=null ? PersonAccountAlias(genericApiName) : genericApiName.toLowerCase();
       	}
