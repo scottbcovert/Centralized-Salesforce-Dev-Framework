@@ -45,6 +45,7 @@ public class RepeatingBatch implements Database.Batchable<sObject>, Database.All
             }
         }
         if (arsToDelete.size()>0){
+            DMLManager.deleteAsSystem(arsToDelete);
             Database.emptyRecycleBin(arsToDelete);
         }
     }

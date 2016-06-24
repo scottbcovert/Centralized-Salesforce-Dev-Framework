@@ -108,7 +108,7 @@ public abstract class TriggerHandlerBase implements ITriggerHandler {
 	    		DiagnosticsInstrumentation.Debug(errorMessage);
 	    		// Attempt Recovery
 	    		AsyncRequest__c ar = new AsyncRequest__c(AsyncType__c = RepeatingBatch.TYPE_DEFAULT,ScheduledTime__c = System.now(),Params__c=String.Join(new List<ID>(concurrencyFailures.keyset()),','));
-	    		insert ar;
+	    		DMLManager.insertAsSystem(ar);
 	    		ScheduleHandler.StartScheduler();
 	    	}
 	    	if(updateFailures.size()>0) {

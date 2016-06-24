@@ -18,7 +18,7 @@ public with sharing class SObjectServiceTest {
         // Generate contact records from factory
         list<Contact> testContacts = (list<Contact>)DataFactoryService.CreateRecords('Contact',new list<String>{'LastName'},'TestContact',1);
         // Insert test contacts
-        insert testContacts;
+        DMLManager.insertAsSystem(testContacts);
 
         // Generate a standard user for testing sharing settings
     	List<Profile> standardUserProfile = SObjectService.RunQuery('Profile', null, false, 'Name = \'Standard User\'', null, null, 1, false);
@@ -31,7 +31,7 @@ public with sharing class SObjectServiceTest {
       	standardUser[0].LocaleSidKey='en_US';
       	standardUser[0].TimeZoneSidKey='America/Los_Angeles';
       	standardUser[0].ProfileId = standardUserProfile[0].Id;
-      	insert standardUser;
+      	DMLManager.insertAsSystem(standardUser);
     }
 
     /** 

@@ -19,17 +19,17 @@ public with sharing class DataFactoryServiceTest {
 
         // Create account record
         list<Account> testAccount = (list<Account>)DataFactoryService.CreateRecords('Account',new list<String>{'Name'},'Test',1);
-        insert testAccount;
+        DMLManager.insertAsSystem(testAccount);
         System.assertEquals('Test1',testAccount[0].Name,'Error in DataFactoryService.CreateRecords - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 
         // Create contact record
         list<Contact> testContact = (list<Contact>)DataFactoryService.CreateRecords('Contact',new list<String>{'LastName'},'Test',1);
-        insert testContact;
+        DMLManager.insertAsSystem(testContact);
         System.assertEquals('Test1',testContact[0].LastName,'Error in DataFactoryService.CreateRecords - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 
         // Relate contact record to account record
         DataFactoryService.CreateRelationships(testContact, testAccount, 'AccountId');
-        update testContact;
+        DMLManager.updateAsSystem(testContact);
         System.assertEquals(testAccount[0].Id,testContact[0].AccountId,'Error in DataFactoryService.CreateRelationships - Stacktrace: ' + DiagnosticsInstrumentation.ExceptionTrace);
 
 	}

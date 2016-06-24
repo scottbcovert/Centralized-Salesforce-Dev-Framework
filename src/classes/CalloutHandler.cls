@@ -89,7 +89,7 @@ public class CalloutHandler {
     public static void createRequestBody(String jsonPayload, Id crId)
     {
         Attachment requestBodyAttachment = new Attachment(ParentId=crId,Name=REQUEST_NAME,Body=Blob.valueOf(jsonPayload),ContentType=JSON_CONTENT_TYPE);
-        insert requestBodyAttachment;
+        DMLManager.insertAsSystem(requestBodyAttachment);
     }
 
     /**
@@ -159,7 +159,7 @@ public class CalloutHandler {
         cr.Sent__c = System.now();
         Decimal timeDiff = cr.Sent__c.getTime() - start;
         cr.Duration__c = timeDiff.Divide(1000,3);
-        update cr;
+        DMLManager.updateAsSystem(cr);
     }
 
     /**
@@ -172,7 +172,7 @@ public class CalloutHandler {
     private static void createResponseBody(String httpResponse, Id crId)
     {
         Attachment requestBodyAttachment = new Attachment(ParentId=crId,Name=RESPONSE_NAME,Body=Blob.valueOf(httpResponse),ContentType=JSON_CONTENT_TYPE);
-        insert requestBodyAttachment;
+        DMLManager.insertAsSystem(requestBodyAttachment);
     }
 
 }

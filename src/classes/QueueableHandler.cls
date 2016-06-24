@@ -74,7 +74,7 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
         }
         // Add the async request to the queue
         AsyncRequest__c ar = new AsyncRequest__c(JobId__c = queuedJobId, AsyncType__c = asyncJobType);
-        insert ar;
+        DMLManager.insertAsSystem(ar);
         return ar;
     }
 
@@ -91,7 +91,7 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
         AsyncRequest__c ar = startJob(asyncJobType);
         // Insert a related callout request to store HTTP request/response info
         cr.AsyncRequest__c = ar.Id;            
-        insert cr;             
+        DMLManager.insertAsSystem(cr);             
     }
 
     /**
@@ -108,7 +108,7 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
             if (!asyncRequestsToFlush.isEmpty())
             {
                 for (AsyncRequest__c ar : asyncRequestsToFlush.values()) ar.Aborted__c = true;
-                Database.update(asyncRequestsToFlush.values());
+                DMLManager.updateAsSystem(asyncRequestsToFlush.values());
             }                
         }
         catch(Exception ex)
@@ -151,11 +151,11 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
         // Only bother to update async request if it is not set to be deleted
         // This also must be done after processing of the async request in case a synchronous callout is made
         // (SF does not allow DML prior to a callout in the same transaction - http://bit.ly/1QeV6dC)
-        if (!arsToDelete.containsKey(ar.Id)) Database.update(ar);        
+        if (!arsToDelete.containsKey(ar.Id)) DMLManager.updateAsSystem(ar);        
         if (!arsToDelete.isEmpty())
         {
             // Delete executed AsyncRequests and empty them from the recycling bin
-            Database.delete(arsToDelete.values());
+            DMLManager.deleteAsSystem(arsToDelete.values());
             Database.emptyRecycleBin(arsToDelete.values());            
         }
     }

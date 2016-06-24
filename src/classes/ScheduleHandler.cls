@@ -40,7 +40,7 @@ public class ScheduleHandler implements ScheduledDispatcher.IScheduleDispatched 
     			// This async request has failed the maximum number of times allowed; abort
     			requests[0].Aborted__c = true;
     		}
-    		update requests;
+    		DMLManager.updateAsSystem(requests);
     		DiagnosticsInstrumentation.DebugException(ex);
             ScheduleHandler.StartScheduler();
     	}

@@ -28,7 +28,7 @@ public class RepeatingFuture {
         }
         if (arsToDelete.size()>0){
             // Delete AsyncRequests
-            delete arsToDelete;
+            DMLManager.deleteAsSystem(arsToDelete);
             Database.emptyRecycleBin(arsToDelete);
         }
         ScheduleHandler.StartScheduler();
