@@ -111,6 +111,34 @@ pre {
 }
 
 /*******************************************************************************
+ * constants is used to display the table of class constants */
+.constants {
+  /*border-color: lightgray;*/
+  width: 100%;
+}
+.constants td {
+  vertical-align: top;
+  width: 90%;
+}
+.clsConstantName {
+  font-size: .7em;
+  font-weight: bold;
+  text-align: right;
+}
+.clsConstantDeclaration {
+  font: normal .7em Courier;
+  color: SteelBlue;
+}
+.clsConstantDescription {
+  font-size: .7em;
+  font-weight: normal;
+}
+.clsConstantValue {
+  font-size: .7em;
+  text-decoration: underline;
+}
+
+/*******************************************************************************
  * trigger is the set of styles to provide the expand/collapse bar */
 h2.trigger {
   margin: 0 0 2 0;
