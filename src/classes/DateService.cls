@@ -125,6 +125,106 @@ public with sharing class DateService
 
 	/**
     * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the start boundary for a given date literal
+    * @param DateLiteral DateLiteral enum value
+    * @return DateTime Start boundary for the given date literal
+    */
+	public static DateTime dateLiteralToStartDateTime(DateLiteral dl)
+	{
+		return dateLiteralToDateTimeMap(dl).get(START_KEY);
+	}
+
+	/**
+    * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the start boundary for the given date literal and number of periods
+    * @param DateLiteral DateLiteral enum value
+    * @param Integer Number of periods to apply when finding the range for the given date literal
+    * @return DateTime Start boundary for the given date literal
+    */
+	public static DateTime dateLiteralToStartDateTime(DateLiteral dl, Integer numPeriods)
+	{
+		return dateLiteralToDateTimeMap(dl,numPeriods).get(START_KEY);
+	}
+
+	/**
+    * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the end boundary for a given date literal
+    * @param DateLiteral DateLiteral enum value
+    * @return DateTime End boundary for the given date literal
+    */
+	public static DateTime dateLiteralToEndDateTime(DateLiteral dl)
+	{
+		return dateLiteralToDateTimeMap(dl).get(END_KEY);
+	}
+
+	/**
+    * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the end boundary for the given date literal and number of periods
+    * @param DateLiteral DateLiteral enum value
+    * @param Integer Number of periods to apply when finding the range for the given date literal
+    * @return DateTime End boundary for the given date literal
+    */
+	public static DateTime dateLiteralToEndDateTime(DateLiteral dl, Integer numPeriods)
+	{
+		return dateLiteralToDateTimeMap(dl,numPeriods).get(END_KEY);
+	}
+
+	/**
+    * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the start boundary for a given date literal
+    * @param DateLiteral DateLiteral enum value
+    * @return Date Start boundary for the given date literal
+    */
+	public static Date dateLiteralToStartDate(DateLiteral dl)
+	{
+		return dateLiteralToDateMap(dl).get(START_KEY);
+	}
+
+	/**
+    * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the start boundary for the given date literal and number of periods
+    * @param DateLiteral DateLiteral enum value
+    * @param Integer Number of periods to apply when finding the range for the given date literal
+    * @return Date Start boundary for the given date literal
+    */
+	public static Date dateLiteralToStartDate(DateLiteral dl, Integer numPeriods)
+	{
+		return dateLiteralToDateMap(dl,numPeriods).get(START_KEY);
+	}
+
+	/**
+    * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the end boundary for a given date literal
+    * @param DateLiteral DateLiteral enum value
+    * @return Date End boundary for the given date literal
+    */
+	public static Date dateLiteralToEndDate(DateLiteral dl)
+	{
+		return dateLiteralToDateMap(dl).get(END_KEY);
+	}
+
+	/**
+    * @author Scott Covert
+    * @date 7/29/2016
+    * @description Retrieves the end boundary for the given date literal and number of periods
+    * @param DateLiteral DateLiteral enum value
+    * @param Integer Number of periods to apply when finding the range for the given date literal
+    * @return Date End boundary for the given date literal
+    */
+	public static Date dateLiteralToEndDate(DateLiteral dl, Integer numPeriods)
+	{
+		return dateLiteralToDateMap(dl,numPeriods).get(END_KEY);
+	}
+
+	/**
+    * @author Scott Covert
     * @date 7/28/2016
     * @description Returns a datetime map for a given date literal name and period number
     * @param String Date literal name
