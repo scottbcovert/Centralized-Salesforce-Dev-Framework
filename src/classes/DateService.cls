@@ -76,6 +76,8 @@ public with sharing class DateService
     */
 	public static Map<String,DateTime> dateLiteralToDateTimeMap(DateLiteral dl)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToDateTimeMap');
+		DiagnosticsInstrumentation.Pop();
 		if ( dl.name().contains(N_ID) || dl.name().contains(AGO_ID) )
 			return dateLiteralToDateTimeMap(dl, 0);		
 		return buildDateTimeMap(dl.name(),1);
@@ -91,6 +93,8 @@ public with sharing class DateService
     */
 	public static Map<String,DateTime> dateLiteralToDateTimeMap(DateLiteral dl, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToDateTimeMap');
+		DiagnosticsInstrumentation.Pop();
 		if ( !dl.name().contains(N_ID) && !dl.name().contains(AGO_ID) )
 			return dateLiteralToDateTimeMap(dl);
 		if (numPeriods == null || numPeriods == 0)			
@@ -107,6 +111,8 @@ public with sharing class DateService
     */
 	public static Map<String,Date> dateLiteralToDateMap(DateLiteral dl)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToDateMap');
+		DiagnosticsInstrumentation.Pop();
 		return dateTimeMapToDateMap( dateLiteralToDateTimeMap(dl) );
 	}
 
@@ -120,6 +126,8 @@ public with sharing class DateService
     */
 	public static Map<String,Date> dateLiteralToDateMap(DateLiteral dl, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToDateMap');
+		DiagnosticsInstrumentation.Pop();
 		return dateTimeMapToDateMap( dateLiteralToDateTimeMap(dl, numPeriods) );
 	}
 
@@ -132,6 +140,8 @@ public with sharing class DateService
     */
 	public static DateTime dateLiteralToStartDateTime(DateLiteral dl)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToStartDateTime');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateTimeMap(dl).get(START_KEY);
 	}
 
@@ -145,6 +155,8 @@ public with sharing class DateService
     */
 	public static DateTime dateLiteralToStartDateTime(DateLiteral dl, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToStartDateTime');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateTimeMap(dl,numPeriods).get(START_KEY);
 	}
 
@@ -157,6 +169,8 @@ public with sharing class DateService
     */
 	public static DateTime dateLiteralToEndDateTime(DateLiteral dl)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToEndDateTime');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateTimeMap(dl).get(END_KEY);
 	}
 
@@ -170,6 +184,8 @@ public with sharing class DateService
     */
 	public static DateTime dateLiteralToEndDateTime(DateLiteral dl, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToEndDateTime');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateTimeMap(dl,numPeriods).get(END_KEY);
 	}
 
@@ -182,6 +198,8 @@ public with sharing class DateService
     */
 	public static Date dateLiteralToStartDate(DateLiteral dl)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToStartDate');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateMap(dl).get(START_KEY);
 	}
 
@@ -195,6 +213,8 @@ public with sharing class DateService
     */
 	public static Date dateLiteralToStartDate(DateLiteral dl, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToStartDate');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateMap(dl,numPeriods).get(START_KEY);
 	}
 
@@ -207,6 +227,8 @@ public with sharing class DateService
     */
 	public static Date dateLiteralToEndDate(DateLiteral dl)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToEndDate');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateMap(dl).get(END_KEY);
 	}
 
@@ -220,6 +242,8 @@ public with sharing class DateService
     */
 	public static Date dateLiteralToEndDate(DateLiteral dl, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateLiteralToEndDate');
+		DiagnosticsInstrumentation.Pop();
 		return dateLiteralToDateMap(dl,numPeriods).get(END_KEY);
 	}
 
@@ -233,16 +257,24 @@ public with sharing class DateService
     */
 	private static Map<String,DateTime> buildDateTimeMap(String dlName, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.buildDateTimeMap');
 		// LAST/NEXT_90_DAYS date literals are really just instances of the LAST/NEXT_N_DAYS date literals
 		if ( dlName.contains(NINETY_ID) && dlName.contains(new List<String>(NAME_BY_OFFSET.keySet())[0]) )
+		{
+			DiagnosticsInstrumentation.Pop();
 			return buildDateTimeMap(DateLiteral.LAST_N_DAYS.name(), 90);
+		}
 		else if ( dlName.contains(NINETY_ID) )
+		{
+			DiagnosticsInstrumentation.Pop();
 			return buildDateTimeMap(DateLiteral.NEXT_N_DAYS.name(), 90);
+		}
 		// Special single day date literals
 		for (String dayKey : DAY_PERIODS)
 		{
 			if ( dlName == dayKey )
 			{
+				DiagnosticsInstrumentation.Pop();
 				return new Map<String,DateTime>{ START_KEY => convertDateTimeForDST( PERIOD_BY_DT_START.get(dayKey), START_KEY ), END_KEY => convertDateTimeForDST( DateTime.newInstance(PERIOD_BY_DT_END.get(dayKey).getTime()-1), END_KEY ) };			
 			}
 		}
@@ -266,10 +298,11 @@ public with sharing class DateService
 				}
 				if ( period.endsWith('S') )
 					period = period.substring(0, period.length()-1);
+				DiagnosticsInstrumentation.Pop();
 				return buildDateTimeMap(dlName,period,offset,numPeriods);	
 			}
 		}
-		throw new CustomException('DateService Error: Unhandled date literal value!');
+		throw new CustomException('DateService Error: Unhandled date literal value!');		
 		return null;
 	}
 
@@ -285,6 +318,7 @@ public with sharing class DateService
     */
 	private static Map<String,DateTime> buildDateTimeMap(String dlName, String periodType, Integer offset, Integer numPeriods)
 	{
+		DiagnosticsInstrumentation.Push('DateService.buildDateTimeMap');
 		DateTime startDT = PERIOD_BY_DT_START.get(periodType);
 		// Backward-looking date literals will have end boundaries taken from the current period, except for 'AGO' date literals
 		DateTime endDT = ( offset < 0 && !dlName.contains(AGO_ID) ) ? startDT : PERIOD_BY_DT_END.get(periodType);
@@ -360,6 +394,7 @@ public with sharing class DateService
 				endDT = startDT.addYears(offset * numPeriods);
 			}
 		}
+		DiagnosticsInstrumentation.Pop();
 		// LAST_N_DAYS date literals should not have their end boundaries tampered with, again because they actually continue up to the current second
 		return new Map<String,DateTime>{ START_KEY => convertDateTimeForDST( startDT, START_KEY ), END_KEY => (periodType == 'DAY' && offset < 0 && !dlName.contains(AGO_ID) ) ? endDT : convertDateTimeForDST( DateTime.newInstance(endDT.getTime()-1), END_KEY ) };
 	}
@@ -374,6 +409,8 @@ public with sharing class DateService
     */
 	private static DateTime convertDateTimeForDST(DateTime originalDT, String type)
 	{
+		DiagnosticsInstrumentation.Push('DateService.convertDateTimeForDST');
+		DiagnosticsInstrumentation.Pop();
 		// Start boundaries should always be 12:00
 		if (originalDT.hour()==1 && type == START_KEY)
 			return originalDT.addHours(-1);
@@ -396,6 +433,8 @@ public with sharing class DateService
     */
 	private static Map<String,Date> dateTimeMapToDateMap(Map<String,DateTime> dateTimeMap)
 	{
+		DiagnosticsInstrumentation.Push('DateService.dateTimeMapToDateMap');
+		DiagnosticsInstrumentation.Pop();
 		return new Map<String,Date>{ START_KEY => dateTimeMap.get(START_KEY).date(), END_KEY => dateTimeMap.get(END_KEY).date() };
 	}
 
