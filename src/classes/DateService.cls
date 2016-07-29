@@ -13,12 +13,14 @@ public with sharing class DateService
 	@TestVisible private static final String N_ID = '_N_';
 	/** Identifier for date literal containing _AGO */
 	@TestVisible private static final String AGO_ID = '_AGO';
+	/** Identifier for date literal containing _FISCAL_ */
+	private static final String FISCAL_ID = '_FISCAL';
 	/** Identifier for date literal containing _90_ */
 	private static final String NINETY_ID = '_90_';
 	/** Message to relay unspecified n error */
 	@TestVisible private static final String UNSPECIFIED_N_ERROR_MESSAGE = 'DateService Error: You must specify an \'N\' value for this date literal!';
 	/** List of date literal identifier values */
-	private static final List<String> DL_IDS = new List<String>{ N_ID, AGO_ID, '_FISCAL', '_' };	
+	private static final List<String> DL_IDS = new List<String>{ N_ID, AGO_ID, FISCAL_ID, '_' };	
 	/** Mapping of offset names by corresponding integer values for date literals */
 	private static final Map<String,Integer> NAME_BY_OFFSET = new Map<String,Integer>{ 'LAST' => -1, 'THIS' => 0, 'NEXT' => 1};
 	/** List of special single day date literals */
@@ -270,7 +272,7 @@ public with sharing class DateService
 				if ( dlId != AGO_ID )
 				{
 					offset = NAME_BY_OFFSET.get(dlName.substring(0,idIndex));
-					period = dlName.substring(idIndex + dlId.length(), dlName.length());					
+					period = ( dlId == FISCAL_ID ) ? FISCAL_ID.substring(1,FISCAL_ID.length()) + dlName.substring(idIndex + dlId.length(), dlName.length()) : dlName.substring(idIndex + dlId.length(), dlName.length());					
 				}
 				else
 				{
