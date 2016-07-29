@@ -1,0 +1,10 @@
+<!-- Add to the root folder of your Salesforce project within your IDE workspace -->
+<project name="Tython Framework" default="docs" basedir=".">	
+	<target name="docs">
+		<delete dir="${basedir}/Documentation" />
+        <mkdir dir="${basedir}/Documentation" />
+		<java fork="true" failonerror="true" jar="lib/SfApexDoc.jar">
+			<arg line="-s src/classes -t Documentation/ -a docAuthor.txt -h docHome.txt -p global,public,private,protected" />
+		</java>		
+	</target>
+</project>

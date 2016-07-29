@@ -24,6 +24,6 @@ Next Steps - Time permitting here are some other concepts/items I'd like to add 
 
 * Configuration Page for Updating Config Settings
 
-[Documentation](http://scottbcovert.github.io/Centralized-Salesforce-Dev-Framework/) was created using ApexDocs (originally developed by Aslam Bari and later improved by Steve Cox) and has been included as a zip file in the project
+[Documentation](http://scottbcovert.github.io/Centralized-Salesforce-Dev-Framework/) was created using ApexDocs (originally developed by Aslam Bari and later improved by Steve Cox) and has been included in the project
 
 Happy Coding!

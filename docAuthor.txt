@@ -1,0 +1,2 @@
+projectName = Centralized Salesforce Development Framework
+author = Scott Covert <a href="mailto:scott.b.covert@gmail.com?Subject=Centralized%20Salesforce%20Development%20Framework"> (scott.b.covert@gmail.com)</a>

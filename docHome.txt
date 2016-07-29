@@ -1,0 +1,29 @@
+<h1>Centralized Salesforce Development Framework</h1>
+<p>This framework was originally built using concepts introduced by Dan Appleman in <b>Advanced Apex Programming</b> and then further expanded using the Domain, Selector, & Service layer patterns discussed in Andy Fawcett's <b>Force.com Enterprise Architecture</b> (both are must-reads for any Apex developer).
+</p>
+<p>Much of the original codebase came from an open-sourced respository that was developed by Hari Krishnan and discussed in further detail within <a href="http://krishhari.wordpress.com/2013/07/22/an-architecture-framework-to-handle-triggers-in-the-force-com-platform/">his great blog post</a>.</p>
+<p>All credit for the work done in this project is due to them; all blame for any bugs should be directed to yours truly.</p>
+<p>The main goals of this project were to add the following concepts (again taken from Dan's <b>Advanced Apex Programming</b> and Andy's <b>Force.com Enterprise Architecture</b>) to Hari's foundational framework:
+	<ul>
+		<li>Entry Points for Asynchronous, Batch, & Scheduled Apex Operations</li>
+		<li>Centralized Async Handling & Chaining via Queueable Apex</li>
+		<li>Centralized Diagnostic Infrastructure</li>
+		<li>Centralized Exception Handling</li>
+		<li>Custom Stack Tracing for Debugging</li>
+		<li>Custom Debug Log Storing, Clearing, & Emailing</li>
+		<li>Concurrency Handling via Silent Logging & Recovery</li>
+		<li>Comprehensive Application KillSwitch</li>
+		<li>Apex Enterprise Patterns: Domain, Selector, & Service Layer</li>
+		<li>Centralized Factory for Test Data Generation</li>
+		<li>Custom Metadata Type Utilization for Obeying Org-Specific Field Requirements</li>
+		<li>Custom Metadata Type Utilization for Disabling Tests on an Org-Specific Basis</li>
+	</ul>
+</p>
+<p>Next Steps - Time permitting here are some other concepts/items I'd like to add to the framework:
+	<ul>
+		<li>Configuration Page for Updating Config Settings</li>
+	</ul>
+</p>
+<p>All source code can be found on <a href="https://github.com/scottbcovert/Centralized-Salesforce-Dev-Framework">GitHub</a></p>
+<p><a href="http://scottbcovert.github.io/Centralized-Salesforce-Dev-Framework/">Documentation</a> was created using ApexDocs (originally developed by Aslam Bari and later improved by Steve Cox) and has been included in the project</p>
+<p>Happy Coding!</p>

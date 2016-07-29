@@ -20,8 +20,4 @@ Referenced\ Packages/*
 .settings/*
 
 #Ignore SfApexDox Files
-build.xml
-docAuthor.txt
-docHome.txt
 SfApexDocLog.txt
-SfApexDocs/*
