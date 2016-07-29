@@ -3,7 +3,7 @@
 * @date 3/3/2016
 * @description This class provides mock HTTP callout responses for unit tests
 */
-@isTest (oninstall=true seealldata=false)
+@isTest (seealldata=false)
 public with sharing class HttpCalloutMockService implements HttpCalloutMock {
 
 	/** Content Type Header Key */

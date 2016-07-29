@@ -3,7 +3,7 @@
 * @date 11/9/2014
 * @description This class provides sample unit tests for Accounts
 */
-@isTest (oninstall=true seealldata=false)
+@isTest (seealldata=false)
 public with sharing class AccountsTest { 
 	
 	/** 
@@ -26,7 +26,7 @@ public with sharing class AccountsTest {
 	* @date 11/9/2014
 	* @description This method tests the framework using the sample account trigger. 
 	*/
-	@isTest (oninstall=true seealldata=false)
+	@isTest (seealldata=false)
 	public static void testAccountTrigger() {
 		
 		if (!TestVerificationService.ShouldExecute('AccountsTest.testAccountTrigger')) return;

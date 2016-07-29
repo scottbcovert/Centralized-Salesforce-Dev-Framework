@@ -3,7 +3,7 @@
 * @date 12/20/2015
 * @description This class provides unit tests for the DataFactoryService test class
 */
-@isTest (oninstall=true seealldata=false)
+@isTest (seealldata=false)
 public with sharing class DataFactoryServiceTest { 
 
 	/** 
@@ -11,7 +11,7 @@ public with sharing class DataFactoryServiceTest {
 	* @date 12/20/2015
 	* @description Tests the DataFactoryService methods
 	*/
-	@isTest (oninstall=true seealldata=false)
+	@isTest (seealldata=false)
 	public static void testDataFactoryService() {
 		// DataFactoryService must be tested individually since calls from @testSetup method do not count for code coverage
         

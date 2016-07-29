@@ -3,7 +3,7 @@
 * @date 12/17/2015
 * @description This class provides unit tests for SObjectService
 */
-@isTest (oninstall=true seealldata=false)
+@isTest (seealldata=false)
 public with sharing class SObjectServiceTest { 
 	
 	/** 
@@ -39,7 +39,7 @@ public with sharing class SObjectServiceTest {
 	* @date 12/17/2015
 	* @description This method tests the SObjectService methods
 	*/
-	@isTest (oninstall=true seealldata=false)
+	@isTest (seealldata=false)
 	public static void testSObjectService() {
 
 		if (!TestVerificationService.ShouldExecute('SObjectServiceTest.testSobjectService')) return;

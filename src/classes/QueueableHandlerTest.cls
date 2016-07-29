@@ -3,7 +3,7 @@
 * @date 6/17/2016
 * @description This class provides unit tests for the QueueableHandler test class
 */
-@isTest (oninstall=true seealldata=false)
+@isTest (seealldata=false)
 public with sharing class QueueableHandlerTest { 
 
 	/** 
@@ -11,7 +11,7 @@ public with sharing class QueueableHandlerTest {
 	* @date 6/17/2016
 	* @description Tests the QueueableHandler methods
 	*/
-	@isTest (oninstall=true seealldata=false)
+	@isTest (seealldata=false)
 	public static void testQueueableHandler() {	        
         
 	if (!TestVerificationService.ShouldExecute('QueueableHandlerTest.testQueueableHandler')) return;
