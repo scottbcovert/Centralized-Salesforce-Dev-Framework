@@ -7,11 +7,11 @@
 public with sharing class DateServiceTest
 {
 	/** Reference date to be used during testing */
-	private static final Date epochDate = Date.newInstance(1970, 1, 1);
+	private static final Date EPOCH_DATE = Date.newInstance(1970, 1, 1);
 	/** 'N' value to be applied during tests */
-	private static final Integer numPeriods = 3;
+	private static final Integer NUM_PERIODS = 3;
 	/** Map of fiscal period by start date, which simulates a fiscal year that starts in September */
-	private static final Map<String,Date> fiscalPeriodTypeByStartDate = new Map<String,Date>{ 'FISCAL_QUARTER' => Date.newInstance(1969, 12, 1), 'FISCAL_HALF_YEAR' => Date.newInstance(1969, 9, 1), 'FISCAL_YEAR' => Date.newInstance(1969, 9, 1) };
+	private static final Map<String,Date> FISCAL_PERIOD_TYPE_BY_START_DATE = new Map<String,Date>{ 'FISCAL_QUARTER' => Date.newInstance(1969, 12, 1), 'FISCAL_HALF_YEAR' => Date.newInstance(1969, 9, 1), 'FISCAL_YEAR' => Date.newInstance(1969, 9, 1) };
 	/** Fixed datetime boundary map to compare against DateService methods' results */
 	private static Map<DateLiteral,Map<String,DateTime>> fixedDateTimeBoundaryMap;
 	/** Static code block for initializing fixedDateTimeBoundaryMap */
@@ -20,283 +20,283 @@ public with sharing class DateServiceTest
 		{
 			DateLiteral.YESTERDAY => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addDays(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addDays(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.TODAY => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addDays(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addDays(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.TOMORROW => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addDays(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addDays(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addDays(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addDays(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_WEEK => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.toStartOfWeek().addDays(-7), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.toStartOfWeek(), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(-7), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.toStartOfWeek(), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_WEEK => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.toStartOfWeek(), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.toStartOfWeek().addDays(7), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.toStartOfWeek(), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(7), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_WEEK => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.toStartOfWeek().addDays(7), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.toStartOfWeek().addDays(14), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(7), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(14), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_WEEKS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.toStartOfWeek().addDays(-7 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.toStartOfWeek(), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(-7 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.toStartOfWeek(), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_WEEKS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.toStartOfWeek().addDays(7), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.toStartOfWeek().addDays(7*(1+numPeriods)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(7), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(7*(1+NUM_PERIODS)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_WEEKS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.toStartOfWeek().addDays(-7 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.toStartOfWeek().addDays(-7 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(-7 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.toStartOfWeek().addDays(-7 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_MONTH => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_MONTH => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_MONTHS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(1+numPeriods), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(1+NUM_PERIODS), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_MONTHS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_MONTHS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(-1 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(-1 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_MONTH => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_90_DAYS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addDays(-90), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => Datetime.newInstance(epochDate, DateService.TEST_TIME)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addDays(-90), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => Datetime.newInstance(EPOCH_DATE, DateService.TEST_TIME)
 			},
 			DateLiteral.NEXT_90_DAYS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addDays(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addDays(91), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addDays(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addDays(91), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_DAYS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addDays(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => Datetime.newInstance(epochDate, DateService.TEST_TIME)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addDays(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => Datetime.newInstance(EPOCH_DATE, DateService.TEST_TIME)
 			},
 			DateLiteral.NEXT_N_DAYS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addDays(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addDays(1+numPeriods), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addDays(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addDays(1+NUM_PERIODS), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_DAYS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addDays(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addDays(-1 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addDays(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addDays(-1 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_QUARTER => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_QUARTER => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(3), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(3), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_QUARTER => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_QUARTERS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-3 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-3 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_QUARTERS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(3+(3*numPeriods)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(3+(3*NUM_PERIODS)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_QUARTERS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-3 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(-3 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-3 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(-3 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_HALF_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_HALF_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_HALF_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(12), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(12), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_HALF_YEARS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-6 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(-6 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-6 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(-6 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_HALF_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(-6 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(-6 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_HALF_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addMonths(6+(6*numPeriods)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addMonths(6+(6*NUM_PERIODS)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addYears(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addYears(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addYears(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addYears(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},	
 			DateLiteral.NEXT_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addYears(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addYears(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_YEARS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addYears(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addYears(-1 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addYears(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addYears(-1 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},	
 			DateLiteral.LAST_N_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addYears(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addYears(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE, Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(epochDate.addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(epochDate.addYears(1 + numPeriods), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(EPOCH_DATE.addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(EPOCH_DATE.addYears(1 + NUM_PERIODS), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},	
 			DateLiteral.LAST_FISCAL_QUARTER => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(-3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(-3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_FISCAL_QUARTER => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER'), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(3), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER'), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(3), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},	
 			DateLiteral.NEXT_FISCAL_QUARTER => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_FISCAL_QUARTERS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(-3 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(-3 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_FISCAL_QUARTERS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(3 + (3 * numPeriods)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(3), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(3 + (3 * NUM_PERIODS)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_FISCAL_QUARTERS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(-3 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_QUARTER').addMonths(-3 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(-3 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_QUARTER').addMonths(-3 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},	
 			DateLiteral.LAST_FISCAL_HALF_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(-6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(-6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_FISCAL_HALF_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR'), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR'), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(6), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_FISCAL_HALF_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(12), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(12), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_FISCAL_HALF_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(-6 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(-6 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_FISCAL_HALF_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(6 + (6 * numPeriods)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(6), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(6 + (6 * NUM_PERIODS)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_FISCAL_HALF_YEARS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(-6 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_HALF_YEAR').addMonths(-6 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(-6 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_HALF_YEAR').addMonths(-6 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},	
 			DateLiteral.LAST_FISCAL_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(-1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.THIS_FISCAL_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR'), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR'), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(1), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},	
 			DateLiteral.NEXT_FISCAL_YEAR => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(2), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.LAST_N_FISCAL_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR'), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.NEXT_N_FISCAL_YEARS => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(1 + numPeriods), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(1), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(1 + NUM_PERIODS), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			},
 			DateLiteral.N_FISCAL_YEARS_AGO => new Map<String,DateTime>
 			{
-				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(-1 * numPeriods), Time.newInstance(0,0,0,0)), DateService.START_KEY),
-				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(fiscalPeriodTypeByStartDate.get('FISCAL_YEAR').addYears(-1 * (numPeriods-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
+				DateService.START_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(-1 * NUM_PERIODS), Time.newInstance(0,0,0,0)), DateService.START_KEY),
+				DateService.END_KEY => DateService.convertDateTimeForDST( Datetime.newInstance(Datetime.newInstance(FISCAL_PERIOD_TYPE_BY_START_DATE.get('FISCAL_YEAR').addYears(-1 * (NUM_PERIODS-1)), Time.newInstance(0,0,0,0)).getTime()-1), DateService.END_KEY)
 			}
 		};
 	}
@@ -325,12 +325,12 @@ public with sharing class DateServiceTest
 			Date endBoundaryDate;
 		    if ( dl.name().contains(DateService.N_ID) || dl.name().contains(DateService.AGO_ID))
 		    {
-		        dateTimeBoundaryMap = DateService.dateLiteralToDateTimeMap(dl, numPeriods);
-		        startBoundaryDateTime = DateService.dateLiteralToStartDateTime(dl, numPeriods);
-				endBoundaryDateTime = DateService.dateLiteralToEndDateTime(dl, numPeriods);
-		        dateBoundaryMap = DateService.dateLiteralToDateMap(dl, numPeriods);
-		        startBoundaryDate = DateService.dateLiteralToStartDate(dl, numPeriods);
-				endBoundaryDate = DateService.dateLiteralToEndDate(dl, numPeriods);
+		        dateTimeBoundaryMap = DateService.dateLiteralToDateTimeMap(dl, NUM_PERIODS);
+		        startBoundaryDateTime = DateService.dateLiteralToStartDateTime(dl, NUM_PERIODS);
+				endBoundaryDateTime = DateService.dateLiteralToEndDateTime(dl, NUM_PERIODS);
+		        dateBoundaryMap = DateService.dateLiteralToDateMap(dl, NUM_PERIODS);
+		        startBoundaryDate = DateService.dateLiteralToStartDate(dl, NUM_PERIODS);
+				endBoundaryDate = DateService.dateLiteralToEndDate(dl, NUM_PERIODS);
 		    }
 		    else
 		    {
