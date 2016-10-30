@@ -1,27 +1,14 @@
 /**
-* @author Scott Covert
-* @date 11/9/2014
+* @author Scott Covert, Bartosz Juriewicz
+* @date 11/9/2014, 10/30/2016
 * @description This class implements the ITriggerDispatcher and acts as an adapter to avoid implementing all the 
 *				ITriggerDispatcher methods.
 */
 public virtual class TriggerDispatcherBase implements ITriggerDispatcher { 
 	
-	/** Stores before insert handler for trigger event */
-    private static ITriggerHandler beforeInserthandler;
-    /** Stores before update handler for trigger event */
-    private static ITriggerHandler beforeUpdatehandler;
-    /** Stores before delete handler for trigger event */
-    private static ITriggerHandler beforeDeleteHandler;
-    /** Stores after insert handler for trigger event */
-    private static ITriggerHandler afterInserthandler;
-    /** Stores after update handler for trigger event */
-    private static ITriggerHandler afterUpdatehandler;
-    /** Stores after delete handler for trigger event */
-    private static ITriggerHandler afterDeleteHandler;
-    /** Stores after undelete handler for trigger event */
-    private static ITriggerHandler afterUndeleteHandler;
-
-	
+	/** Stores handlers for trigger events */
+    private static Map<Schema.SObjectType, Map<TriggerParameters.TriggerEvent, ITriggerHandler>> triggerHandlersMap;
+    
     /** 
 	* @author Scott Covert
 	* @date 11/9/2014
@@ -104,8 +91,8 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
     public virtual void andFinally() {}
     
     /** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the event handlers. If this is the first call in the context, then this method will create a new 
 	*				instance of the appropriate handler and execute the mainEntry method. If there is an existing call runing 
 	*				on the same context, then this method will use the existing handler instance created by the original call
@@ -116,22 +103,11 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @param TriggerParameters The trigger parameters passed by the framework.
 	* @param TriggerParameters.TriggerEvent The trigger event.
 	*/
-   	protected void execute(ITriggerHandler handlerInstance, TriggerParameters tp, TriggerParameters.TriggerEvent tEvent) {
-    	if(handlerInstance != null) {
-    		if(tEvent == TriggerParameters.TriggerEvent.beforeInsert)
-    			beforeInsertHandler = handlerInstance;
-    		if(tEvent == TriggerParameters.TriggerEvent.beforeUpdate)
-    			beforeUpdateHandler = handlerInstance;
-    		if(tEvent == TriggerParameters.TriggerEvent.beforeDelete)
-    			beforeDeleteHandler = handlerInstance;
-    		if(tEvent == TriggerParameters.TriggerEvent.afterInsert)
-    			afterInsertHandler = handlerInstance;
-    		if(tEvent == TriggerParameters.TriggerEvent.afterUpdate)
-    			afterUpdateHandler = handlerInstance;
-    		if(tEvent == TriggerParameters.TriggerEvent.afterDelete)
-    			afterDeleteHandler = handlerInstance;
-    		if(tEvent == TriggerParameters.TriggerEvent.afterUnDelete)
-    			afterUndeleteHandler = handlerInstance;
+
+   	protected void execute(ITriggerHandler handlerInstance, TriggerParameters tp, TriggerParameters.TriggerEvent tEvent, Schema.SObjectType t) {
+        if(handlerInstance != null) {
+    		addTriggerHandler(handlerInstance, tEvent, t);
+            
     		if (System.isBatch()){
     			handlerInstance.batchEntry(tp);
     		}
@@ -149,21 +125,40 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
     		}
     		handlerInstance.updateObjects();
     	}
+        //reentrant handling
     	else {
-    		if(tEvent == TriggerParameters.TriggerEvent.beforeInsert)
-    			beforeInsertHandler.inProgressEntry(tp);
-    		if(tEvent == TriggerParameters.TriggerEvent.beforeUpdate)
-    			beforeUpdateHandler.inProgressEntry(tp);
-    		if(tEvent == TriggerParameters.TriggerEvent.beforeDelete)
-    			beforeDeleteHandler.inProgressEntry(tp);
-    		if(tEvent == TriggerParameters.TriggerEvent.afterInsert)
-    			afterInsertHandler.inProgressEntry(tp);
-    		if(tEvent == TriggerParameters.TriggerEvent.afterUpdate)
-    			afterUpdateHandler.inProgressEntry(tp);
-    		if(tEvent == TriggerParameters.TriggerEvent.afterDelete)
-    			afterDeleteHandler.inProgressEntry(tp);
-    		if(tEvent == TriggerParameters.TriggerEvent.afterUnDelete)
-    			afterUndeleteHandler.inProgressEntry(tp);
+            ITriggerHandler handler = getTriggerHandler(tEvent, t);
+            if (handler != null) {
+                handler.inProgressEntry(tp);
+            }
     	}
+    }
+
+
+    /** 
+    * @author Bartosz Juriewicz
+    * @date 10/30/2016
+    * @description Adds ITriggerHandler instance to static map 
+    **/
+    private static void addTriggerHandler(ITriggerHandler handlerInstance, TriggerParameters.TriggerEvent tEvent, Schema.SObjectType t) {
+        if (triggerHandlersMap == null) {
+            triggerHandlersMap = new Map<Schema.SObjectType, Map<TriggerParameters.TriggerEvent, ITriggerHandler>>();
+        }
+        if (!triggerHandlersMap.containsKey(t)) {
+            triggerHandlersMap.put(t, new Map<TriggerParameters.TriggerEvent, ITriggerHandler>());
+        }
+        triggerHandlersMap.get(t).put(tEvent, handlerInstance);
+    }
+
+    /** 
+    * @author Bartosz Juriewicz
+    * @date 10/30/2016
+    * @description Gets ITriggerHandler instance from static map
+    **/
+    private static ITriggerHandler getTriggerHandler(TriggerParameters.TriggerEvent tEvent, Schema.SObjectType t) {
+        if (triggerHandlersMap == null || !triggerHandlersMap.containsKey(t) || !triggerHandlersMap.get(t).containsKey(tEvent)) {
+            return null;
+        }
+        return triggerHandlersMap.get(t).get(tEvent);
     }
 }
