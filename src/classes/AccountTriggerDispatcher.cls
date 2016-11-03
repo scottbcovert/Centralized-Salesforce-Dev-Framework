@@ -1,6 +1,6 @@
 /**
-* @author Scott Covert
-* @date 11/9/2014
+* @author Scott Covert, Bartosz Juriewicz
+* @date 11/9/2014, 10/30/2016
 * @description This class extends the TriggerDispatcherBase to provide the dispatching functionality for the trigger actions 
 *				on the Account object. The event handlers support allowing and preventing actions for reentrant scenarios. 
 *				This is controlled by the flag isBeforeXxxxx and isAfterXxxxx member variables. These variables need to be set
@@ -24,8 +24,8 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	private static Boolean isAfterUnDeleteProcessing = false;
 
 	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the trigger framework to carry out the actions before the records are inserted. If there is an
 	*				existing call running on the same context, the rentrant call will utilize the handler that was created
 	*				in the original call.
@@ -34,15 +34,16 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	public virtual override void beforeInsert(TriggerParameters tp) {
 		if(!isBeforeInsertProcessing) {
 			isBeforeInsertProcessing = true;
-			execute(new AccountBeforeInsertTriggerHandler(), tp, TriggerParameters.TriggerEvent.beforeInsert);
+			execute(new AccountBeforeInsertTriggerHandler(), tp, TriggerParameters.TriggerEvent.beforeInsert, Account.getSobjectType());
 			isBeforeInsertProcessing = false;
+		} else {
+			execute(null, tp, TriggerParameters.TriggerEvent.beforeInsert, Account.getSobjectType());
 		}
-		else execute(null, tp, TriggerParameters.TriggerEvent.beforeInsert);
 	}
 
 	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the trigger framework to carry out the actions before the records are updated. If there is an
 	*				existing call running on the same context, the rentrant call will utilize the handler that was created
 	*				in the original call.
@@ -51,15 +52,14 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	public virtual override void beforeUpdate(TriggerParameters tp) {
 		if(!isBeforeUpdateProcessing) {
 			isBeforeUpdateProcessing = true;
-			execute(new AccountBeforeUpdateTriggerHandler(), tp, TriggerParameters.TriggerEvent.beforeUpdate);
+			execute(new AccountBeforeUpdateTriggerHandler(), tp, TriggerParameters.TriggerEvent.beforeUpdate, Account.getSobjectType());
 			isBeforeUpdateProcessing = false;
-		}
-		else execute(null, tp, TriggerParameters.TriggerEvent.beforeUpdate);
+		} else execute(null, tp, TriggerParameters.TriggerEvent.beforeUpdate, Account.getSobjectType());
 	}
 
 	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the trigger framework to carry out the actions before the records are deleted. If there is an
 	*				existing call running on the same context, the rentrant call will utilize the handler that was created
 	*				in the original call.
@@ -68,15 +68,14 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	public virtual override void beforeDelete(TriggerParameters tp) {
 		if(!isBeforeDeleteProcessing) {
 			isBeforeDeleteProcessing = true;
-			execute(new AccountBeforeDeleteTriggerHandler(), tp, TriggerParameters.TriggerEvent.beforeDelete);
+			execute(new AccountBeforeDeleteTriggerHandler(), tp, TriggerParameters.TriggerEvent.beforeDelete, Account.getSobjectType());
 			isBeforeDeleteProcessing = false;
-		}
-		else execute(null, tp, TriggerParameters.TriggerEvent.beforeDelete);
+		} else execute(null, tp, TriggerParameters.TriggerEvent.beforeDelete, Account.getSobjectType());
 	}
 
 	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the trigger framework to carry out the actions after the records are inserted. If there is an
 	*				existing call running on the same context, the rentrant call will utilize the handler that was created
 	*				in the original call.
@@ -85,15 +84,14 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	public virtual override void afterInsert(TriggerParameters tp) {
 		if(!isAfterInsertProcessing) {
 			isAfterInsertProcessing = true;
-			execute(new AccountAfterInsertTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterInsert);
+			execute(new AccountAfterInsertTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterInsert, Account.getSobjectType());
 			isAfterInsertProcessing = false;
-		}
-		else execute(null, tp, TriggerParameters.TriggerEvent.afterInsert);
+		} else execute(null, tp, TriggerParameters.TriggerEvent.afterInsert, Account.getSobjectType());
 	}
 
 	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the trigger framework to carry out the actions after the records are updated. If there is an
 	*				existing call running on the same context, the rentrant call will utilize the handler that was created
 	*				in the original call.
@@ -102,15 +100,14 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	public virtual override void afterUpdate(TriggerParameters tp) {
 		if(!isAfterUpdateProcessing) {
 			isAfterUpdateProcessing = true;
-			execute(new AccountAfterUpdateTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterUpdate);
+			execute(new AccountAfterUpdateTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterUpdate, Account.getSobjectType());
 			isAfterUpdateProcessing = false;
-		}
-		else execute(null, tp, TriggerParameters.TriggerEvent.afterUpdate);
+		} else execute(null, tp, TriggerParameters.TriggerEvent.afterUpdate, Account.getSobjectType());
 	}
 
 	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the trigger framework to carry out the actions after the records are deleted. If there is an
 	*				existing call running on the same context, the rentrant call will utilize the handler that was created
 	*				in the original call.
@@ -119,15 +116,14 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	public virtual override void afterDelete(TriggerParameters tp) {
 		if(!isAfterDeleteProcessing) {
 			isAfterDeleteProcessing = true;
-			execute(new AccountAfterDeleteTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterDelete);
+			execute(new AccountAfterDeleteTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterDelete, Account.getSobjectType());
 			isAfterDeleteProcessing = false;
-		}
-		else execute(null, tp, TriggerParameters.TriggerEvent.afterDelete);
+		} else execute(null, tp, TriggerParameters.TriggerEvent.afterDelete, Account.getSobjectType());
 	}
 
 	/** 
-	* @author Scott Covert
-	* @date 11/9/2014
+	* @author Scott Covert, Bartosz Juriewicz
+	* @date 11/9/2014, 10/30/2016
 	* @description Called by the trigger framework to carry out the actions after the records are undeleted. If there is an
 	*				existing call running on the same context, the rentrant call will utilize the handler that was created
 	*				in the original call.
@@ -136,9 +132,8 @@ public class AccountTriggerDispatcher extends TriggerDispatcherBase {
 	public virtual override void afterUnDelete(TriggerParameters tp) {
 		if(!isAfterUnDeleteProcessing) {
 			isAfterUnDeleteProcessing = true;
-			execute(new AccountAfterUnDeleteTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterUndelete);
+			execute(new AccountAfterUnDeleteTriggerHandler(), tp, TriggerParameters.TriggerEvent.afterUndelete, Account.getSobjectType());
 			isAfterUnDeleteProcessing = false;
-		}
-		else execute(null, tp, TriggerParameters.TriggerEvent.afterUndelete);
+		} else execute(null, tp, TriggerParameters.TriggerEvent.afterUndelete, Account.getSobjectType());
 	}
 }
