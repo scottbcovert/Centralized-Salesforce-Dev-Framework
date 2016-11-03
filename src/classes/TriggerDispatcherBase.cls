@@ -7,7 +7,7 @@
 public virtual class TriggerDispatcherBase implements ITriggerDispatcher { 
 	
 	/** Stores handlers for trigger events */
-    private static Map<Schema.SObjectType, Map<TriggerParameters.TriggerEvent, ITriggerHandler>> triggerHandlersMap;
+    private static Map<String, Map<TriggerParameters.TriggerEvent, ITriggerHandler>> triggerHandlersMap;
     
     /** 
 	* @author Scott Covert
@@ -104,9 +104,9 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
 	* @param TriggerParameters.TriggerEvent The trigger event.
 	*/
 
-   	protected void execute(ITriggerHandler handlerInstance, TriggerParameters tp, TriggerParameters.TriggerEvent tEvent, Schema.SObjectType t) {
+   	protected void execute(ITriggerHandler handlerInstance, TriggerParameters tp, TriggerParameters.TriggerEvent tEvent) {
         if(handlerInstance != null) {
-    		addTriggerHandler(handlerInstance, tEvent, t);
+    		addTriggerHandler(handlerInstance, tEvent, tp.triggerObject);
             
     		if (System.isBatch()){
     			handlerInstance.batchEntry(tp);
@@ -127,7 +127,7 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
     	}
         //reentrant handling
     	else {
-            ITriggerHandler handler = getTriggerHandler(tEvent, t);
+            ITriggerHandler handler = getTriggerHandler(tEvent, tp.triggerObject);
             if (handler != null) {
                 handler.inProgressEntry(tp);
             }
@@ -139,26 +139,32 @@ public virtual class TriggerDispatcherBase implements ITriggerDispatcher {
     * @author Bartosz Juriewicz
     * @date 10/30/2016
     * @description Adds ITriggerHandler instance to static map 
+    * @param ITriggerHandler The trigger handler instance.
+    * @param TriggerParameters.TriggerEvent The trigger event.
+    * @param String The API name of the SObject for the trigger event.
     **/
-    private static void addTriggerHandler(ITriggerHandler handlerInstance, TriggerParameters.TriggerEvent tEvent, Schema.SObjectType t) {
+    private static void addTriggerHandler(ITriggerHandler handlerInstance, TriggerParameters.TriggerEvent tEvent, String soType) {
         if (triggerHandlersMap == null) {
-            triggerHandlersMap = new Map<Schema.SObjectType, Map<TriggerParameters.TriggerEvent, ITriggerHandler>>();
+            triggerHandlersMap = new Map<String, Map<TriggerParameters.TriggerEvent, ITriggerHandler>>();
         }
-        if (!triggerHandlersMap.containsKey(t)) {
-            triggerHandlersMap.put(t, new Map<TriggerParameters.TriggerEvent, ITriggerHandler>());
+        if (!triggerHandlersMap.containsKey(soType)) {
+            triggerHandlersMap.put(soType, new Map<TriggerParameters.TriggerEvent, ITriggerHandler>());
         }
-        triggerHandlersMap.get(t).put(tEvent, handlerInstance);
+        triggerHandlersMap.get(soType).put(tEvent, handlerInstance);
     }
 
     /** 
     * @author Bartosz Juriewicz
     * @date 10/30/2016
     * @description Gets ITriggerHandler instance from static map
+    * @param TriggerParameters.TriggerEvent The trigger event.
+    * @param String The API name of the SObject for the trigger event.
+    * @return ITriggerHandler The ITriggerHandler instance for the trigger event.
     **/
-    private static ITriggerHandler getTriggerHandler(TriggerParameters.TriggerEvent tEvent, Schema.SObjectType t) {
-        if (triggerHandlersMap == null || !triggerHandlersMap.containsKey(t) || !triggerHandlersMap.get(t).containsKey(tEvent)) {
+    private static ITriggerHandler getTriggerHandler(TriggerParameters.TriggerEvent tEvent, String soType) {
+        if (triggerHandlersMap == null || !triggerHandlersMap.containsKey(soType) || !triggerHandlersMap.get(soType).containsKey(tEvent)) {
             return null;
         }
-        return triggerHandlersMap.get(t).get(tEvent);
+        return triggerHandlersMap.get(soType).get(tEvent);
     }
 }
