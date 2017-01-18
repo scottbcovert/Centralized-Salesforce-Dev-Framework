@@ -117,9 +117,9 @@ public class CalloutHandler {
     /**
     * @author Scott Covert
     * @date 1/17/2017
-    * @description Creates Request Body Attachments for Callout Requests
-    * @param String Serialized JSON string to be used as HTTP request payload
-    * @param Id Corresponding CalloutRequest Id to attach request body to
+    * @description Creates Request Client Cert Name Attachments for Callout Requests
+    * @param String Client certificate name to be used
+    * @param Id Corresponding CalloutRequest Id to attach client cert name to
     */
     public static void createRequestClientCert(String certName, Id crId)
     {
