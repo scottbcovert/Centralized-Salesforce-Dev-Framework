@@ -6,8 +6,10 @@
 public class CalloutHandler {
     /** Constant to represent the default callout time limit */
     @TestVisible private static final Integer DEFAULT_CALLOUT_TIME = 10000;
-    /** Constant representing the conent type for JSON */
+    /** Constant representing the content type for JSON */
     private static final String JSON_CONTENT_TYPE = 'application/json';
+    /** Constant representing the content type for plain text */
+    private static final String PLAIN_TEXT_CONTENT_TYPE = 'text/plain';
     /** Constant representing the OK status for callout requests */
     private static final String OK_STATUS = 'OK';
     /** Constant representing the KO status for callout requests */
@@ -18,8 +20,12 @@ public class CalloutHandler {
     public static final String QUEUED_STATUS = 'Queued';
     /** Constant to represent the maximum callout time limit */
     public static final Integer MAX_CALLOUT_TIME = 120000;
-    /** Constant representing the attachment name used to store callout requests */
-    public static final String REQUEST_NAME = 'request';
+    /** Constant representing the attachment name used to store the body of callout requests */
+    public static final String REQUEST_BODY_NAME = 'request body';
+    /** Constant representing the attachment name used to store the headers of callout requests */
+    public static final String REQUEST_HEADERS_NAME = 'request headers';
+    /** Constant representing the attachment name used to store the client certificate name of callout requests */
+    public static final String REQUEST_CERT_NAME = 'request cert';
     /** Constant representing the attachment name used to store callout responses */
     public static final String RESPONSE_NAME = 'response';
     /** Constant representing the GET HTTP Method */
@@ -32,9 +38,7 @@ public class CalloutHandler {
     public static final String PATCH_METHOD = 'PATCH';
     /** Constant representing the DELETE HTTP Method */
     public static final String DELETE_METHOD = 'DELETE';
-    /** Constant representing the endpoint for callouts to use; over time additional endpoints can be stored in other member variables for different callout request types */
-    public static final String ENDPOINT = '';
-
+    
     /**
     * @author Scott Covert
     * @date 2/21/2016
@@ -68,15 +72,33 @@ public class CalloutHandler {
             request.setMethod(cr.Method__c);
             request.setEndpoint(cr.Endpoint__c);
             request.setTimeout(calculateTimeout(cr));            
-            list<Attachment> requestBody = [SELECT Id, CreatedDate, ParentId, Name, ContentType, Body FROM Attachment WHERE Name = :REQUEST_NAME AND ParentId = :cr.Id ORDER BY CreatedDate DESC LIMIT 1];
-            if (requestBody.size() > 0) request.setBody(requestBody[0].Body.toString());            
+            list<Attachment> requestAttachments = [SELECT Id, CreatedDate, ParentId, Name, ContentType, Body FROM Attachment WHERE ParentId = :cr.Id];
+            for (Attachment a : requestAttachments)
+            {
+                if (a.Name == REQUEST_BODY_NAME)
+                {
+                    request.setBody(a.Body.toString());
+                }
+                else if (a.Name == REQUEST_HEADERS_NAME)
+                {
+                    String requestHeaders = a.Body.toString();
+                    for (String headerKeyValuePair : requestHeaders.split(';'))
+                    {
+                        request.setHeader(headerKeyValuePair.split(':')[0], headerKeyValuePair.split(':')[0]);
+                    }                    
+                }
+                else if (a.Name == REQUEST_CERT_NAME)
+                {
+                    request.setClientCertificateName(a.Body.toString());
+                }
+            }
             HttpResponse response = h.send(request);            
             processCalloutResponse(response, cr);         
         }
         catch (Exception ex){
             processFailure(cr, ex);                     
         }
-        updateCalloutRequest(cr, start);
+        updateCalloutRequest(cr, start);        
     }
 
     /**
@@ -88,8 +110,40 @@ public class CalloutHandler {
     */
     public static void createRequestBody(String jsonPayload, Id crId)
     {
-        Attachment requestBodyAttachment = new Attachment(ParentId=crId,Name=REQUEST_NAME,Body=Blob.valueOf(jsonPayload),ContentType=JSON_CONTENT_TYPE);
+        Attachment requestBodyAttachment = new Attachment(ParentId=crId,Name=REQUEST_BODY_NAME,Body=Blob.valueOf(jsonPayload),ContentType=JSON_CONTENT_TYPE);
         DMLManager.insertAsSystem(requestBodyAttachment);
+    }
+
+    /**
+    * @author Scott Covert
+    * @date 1/17/2017
+    * @description Creates Request Body Attachments for Callout Requests
+    * @param String Serialized JSON string to be used as HTTP request payload
+    * @param Id Corresponding CalloutRequest Id to attach request body to
+    */
+    public static void createRequestClientCert(String certName, Id crId)
+    {
+        Attachment requestCertAttachment = new Attachment(ParentId=crId,Name=REQUEST_CERT_NAME,Body=Blob.valueOf(certName),ContentType=PLAIN_TEXT_CONTENT_TYPE);
+        DMLManager.insertAsSystem(requestCertAttachment);
+    }
+
+    /**
+    * @author Scott Covert
+    * @date 1/17/2017
+    * @description Creates Request Headers Attachment for Callout Requests
+    * @param Map Mapping of header keys by their corresponding values
+    * @param Id Corresponding CalloutRequest Id to attach request headers to
+    */
+    public static void createRequestHeaders(Map<String,String> headerKeyByValue, Id crId)
+    {
+        String attachmentBody = '';
+        for (String headerKey : headerKeyByValue.keySet())
+        {
+            attachmentBody += headerKey + ':' + headerKeyByValue.get(headerKey) + ';';
+        }
+        attachmentBody = attachmentBody.removeEnd(';');
+        Attachment requestHeadersAttachment = new Attachment(ParentId=crId,Name=REQUEST_HEADERS_NAME,Body=Blob.valueOf(attachmentBody),ContentType=PLAIN_TEXT_CONTENT_TYPE);
+        DMLManager.insertAsSystem(requestHeadersAttachment);
     }
 
     /**
@@ -160,6 +214,9 @@ public class CalloutHandler {
         Decimal timeDiff = cr.Sent__c.getTime() - start;
         cr.Duration__c = timeDiff.Divide(1000,3);
         DMLManager.updateAsSystem(cr);
+        // Since header attachments may contain authorization information it is probably best to delete them
+        list<Attachment> requestHeaderAttachments = [SELECT Id FROM Attachment WHERE Name = :REQUEST_HEADERS_NAME AND ParentId = :cr.Id];
+        if (!requestHeaderAttachments.isEmpty()) DMLManager.deleteAsSystem(requestHeaderAttachments);
     }
 
     /**

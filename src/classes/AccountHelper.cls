@@ -5,6 +5,9 @@
 */
 public with sharing class AccountHelper {
 	
+	/** Constant representing endpoint of external API for Accounts */
+	private static final String ACCOUNT_ENDPOINT = 'https://httpbin.org/get';
+
 	/**
     * @author Scott Covert
     * @date 11/9/2014
@@ -19,15 +22,10 @@ public with sharing class AccountHelper {
 			newAccount.Id = acct.Id;
 			newAccount.Website = 'www.salesforce.com';
 			resultMap.put(newAccount.Id, newAccount);
-		}				
-		/* Sample code for performing callout asynchronously through queueable apex
-		** To use, uncomment and set CalloutHandler.ENDPOINT; HTTP method will default to GET
-		*/
-		/*
-		CalloutRequest__c cr = new CalloutRequest__c(Endpoint__c = CalloutHandler.ENDPOINT);		
+		}						
+		CalloutRequest__c cr = new CalloutRequest__c(Endpoint__c = ACCOUNT_ENDPOINT);
 		QueueableHandler.startCalloutJob(QueueableHandler.CALLOUT_TOKEN, cr);
 		// QueueableHandler.startCalloutJob(QueueableHandler.ASYNC_TOKEN + QueueableHandler.CALLOUT_TOKEN, cr);
-		*/
 		return resultMap;
 	}
 }
