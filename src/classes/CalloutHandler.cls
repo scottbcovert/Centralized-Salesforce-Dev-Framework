@@ -216,7 +216,11 @@ public class CalloutHandler {
         DMLManager.updateAsSystem(cr);
         // Since header attachments may contain authorization information it is probably best to delete them
         list<Attachment> requestHeaderAttachments = [SELECT Id FROM Attachment WHERE Name = :REQUEST_HEADERS_NAME AND ParentId = :cr.Id];
-        if (!requestHeaderAttachments.isEmpty()) DMLManager.deleteAsSystem(requestHeaderAttachments);
+        if (!requestHeaderAttachments.isEmpty()) 
+        {
+            DMLManager.deleteAsSystem(requestHeaderAttachments);
+            Database.emptyRecycleBin(requestHeaderAttachments);
+        }
     }
 
     /**
