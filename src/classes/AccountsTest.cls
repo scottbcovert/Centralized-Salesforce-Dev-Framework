@@ -31,6 +31,8 @@ public with sharing class AccountsTest {
 		
 		if (!TestVerificationService.ShouldExecute('AccountsTest.testAccountTrigger')) return;
 
+		Test.setMock(HttpCalloutMock.class, new HttpCalloutMockService());
+
 		Account testAccount = (Account)SObjectService.RunQuery('Account', new List<String>{'Id','Name'}, new List<String>(), 'Name = \'TestAcct1\'', new List<String>{'Name'}, SObjectService.ASC_DIR_ORDER, 1, false)[0];
 		testAccount.Name = 'TestAcct2';
 		DMLManager.updateAsSystem(testAccount);

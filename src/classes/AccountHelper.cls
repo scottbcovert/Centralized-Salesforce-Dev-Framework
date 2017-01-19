@@ -6,7 +6,7 @@
 public with sharing class AccountHelper {
 	
 	/** Constant representing endpoint of external API for Accounts */
-	private static final String ACCOUNT_ENDPOINT = 'https://httpbin.org/get';
+	public static final String ACCOUNT_ENDPOINT = 'https://httpbin.org/get';
 
 	/**
     * @author Scott Covert
