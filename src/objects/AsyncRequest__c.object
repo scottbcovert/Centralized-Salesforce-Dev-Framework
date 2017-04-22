@@ -69,15 +69,19 @@
         <fullName>AsyncType__c</fullName>
         <externalId>false</externalId>
         <label>AsyncType</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Default</fullName>
-                <default>true</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <value>
+                    <fullName>Default</fullName>
+                    <default>true</default>
+                    <label>Default</label>
+                </value>
+                <sorted>false</sorted>
+            </valueSetDefinition>
+        </valueSet>
     </fields>
     <fields>
         <fullName>Attempts__c</fullName>

@@ -101,31 +101,34 @@
         <externalId>false</externalId>
         <inlineHelpText>HTTP Method to be used for the callout (GET, POST, etc.)</inlineHelpText>
         <label>Method</label>
-        <picklist>
-            <picklistValues>
-                <fullName>GET</fullName>
-                <default>true</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>POST</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>PUT</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>PATCH</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>DELETE</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>GET</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>POST</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>PUT</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>PATCH</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>DELETE</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
     </fields>
     <fields>
         <fullName>Sent__c</fullName>
@@ -141,27 +144,30 @@
         <fullName>Status__c</fullName>
         <externalId>false</externalId>
         <label>Status</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Queued</fullName>
-                <default>true</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>OK</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>KO</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Failed</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Queued</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>OK</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>KO</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Failed</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
     </fields>
     <fields>
         <fullName>Timeout__c</fullName>
