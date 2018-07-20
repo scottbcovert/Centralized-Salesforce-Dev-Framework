@@ -42,6 +42,11 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
             if (asyncRequests.isEmpty()) return;
             // Set async request to be processed
             ar = asyncRequests[0];
+            // Chain job to process async request later if it is scheduled to execute in the future
+            if (ar.ScheduledTime__c > System.now()){
+                chainJob();
+                return;
+            }
             // Process async request
             processAsyncRequest(ar);
             // Mark async request for deletion
@@ -79,6 +84,27 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
     }
 
     /**
+    * @author Scott Covert - Tython Co.
+    * @date 7/19/2018
+    * @description Enqueues Queueable Apex Job to run after a delay
+    * @param String Type of asynchronous job to be queued
+    * @param DateTime Scheduled time for asynchronous job to run
+    */
+    public static AsyncRequest__c startDelayedJob(String asyncJobType, DateTime scheduledTime)
+    {
+        // Only enqueue a new job as needed
+        if (!asyncJobQueued)
+        {
+            asyncJobQueued = true;
+            queuedJobId = System.enqueueJob(new QueueableDispatcher());
+        }
+        // Add the async request to the queue
+        AsyncRequest__c ar = new AsyncRequest__c(JobId__c = queuedJobId, AsyncType__c = asyncJobType, ScheduledTime__c = scheduledTime);
+        DMLManager.insertAsSystem(ar);
+        return ar;
+    }
+
+    /**
     * @author Scott Covert
     * @date 2/24/2016
     * @description Enqueues Queueable Apex Job
@@ -99,7 +125,7 @@ public class QueueableHandler implements QueueableDispatcher.IQueueableDispatche
     * @date 2/24/2016
     * @description Flushes Async Queue
     */
-    private void flushAsyncQueue()
+    @TestVisible private void flushAsyncQueue()
     {
         try
         {
